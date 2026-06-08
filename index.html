@@ -638,6 +638,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+window._db = db;
+window._fbRef = ref;
+window._fbPush = push;
+window._fbUpdate = update;
+window._fbRemove = remove;
+window._fbSet = set;
 
 // ---- STATE ----
 window._state = {
@@ -913,9 +919,9 @@ window.csvImport = async function(){
   for(const m of data){
     const existing = S.members.find(x=>x.name.toLowerCase()===m.name.toLowerCase());
     if(existing){
-      await update(ref(db,'members/'+existing.id),{score:m.score,role:m.role});
+      await window._fbUpdate(window._fbRef(window._db,'members/'+existing.id),{score:m.score,role:m.role});
     } else {
-      await push(ref(db,'members'),{name:m.name,score:m.score,role:m.role,joinedAt:Date.now()});
+      await window._fbPush(window._fbRef(window._db,'members'),{name:m.name,score:m.score,role:m.role,joinedAt:Date.now()});
     }
     count++;
   }

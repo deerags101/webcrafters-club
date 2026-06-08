@@ -530,6 +530,25 @@ footer{border-top:1px solid var(--border);padding:24px 2rem;text-align:center;fo
         </div>
         <input class="a-input" id="aMemRole" placeholder="Role (e.g. Frontend Dev)" style="margin-bottom:8px"/>
         <button class="btn btn-primary btn-sm btn-full" onclick="adminAddMember()"><i class="fa-solid fa-plus"></i> Add / Update Member</button>
+
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="a-label" style="margin-bottom:8px"><i class="fa-solid fa-file-csv"></i> Bulk Import via CSV</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.6">
+            CSV format: <code style="background:var(--bg);padding:1px 5px;border-radius:4px;color:var(--accent)">Name, Score</code><br/>
+            Excel mein Save As CSV karke upload karo
+          </div>
+          <div class="drop-zone" id="csvDropZone" style="padding:16px;margin-bottom:8px" onclick="document.getElementById('csvFileInput').click()" ondragover="csvDragOver(event)" ondrop="csvDrop(event)">
+            <i class="fa-solid fa-file-csv" style="font-size:24px;color:var(--text3);display:block;margin-bottom:6px"></i>
+            <p style="font-size:12px;color:var(--text2)">Click ya drag CSV file yahan</p>
+          </div>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="csvFileSelected(event)"/>
+          <div id="csvPreview" style="display:none;margin-bottom:8px">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px" id="csvPreviewText"></div>
+            <div style="max-height:100px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;font-size:11px;color:var(--text2)" id="csvPreviewList"></div>
+          </div>
+          <button class="btn btn-green btn-sm btn-full" id="csvImportBtn" onclick="csvImport()" style="display:none"><i class="fa-solid fa-upload"></i> Import All Members</button>
+        </div>
+
         <div style="margin-top:12px;max-height:200px;overflow-y:auto" id="adminMemberList"></div>
       </div>
 
@@ -831,6 +850,82 @@ function renderAdminMemberList(){
       <button class="chip-edit" onclick="editMember('${m.id}','${m.name.replace(/'/g,"\\'")}',${m.score},'${(m.role||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-pen"></i></button>
       <button class="chip-del" onclick="deleteMember('${m.id}','${m.name.replace(/'/g,"\\'")}')">×</button>
     </div>`).join('');
+}
+
+// ---- CSV IMPORT ----
+window._csvData = [];
+
+window.csvDragOver = function(e){
+  e.preventDefault();
+  document.getElementById('csvDropZone').classList.add('drag');
+}
+window.csvDrop = function(e){
+  e.preventDefault();
+  document.getElementById('csvDropZone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if(file) parseCSV(file);
+}
+window.csvFileSelected = function(e){
+  const file = e.target.files[0];
+  if(file) parseCSV(file);
+}
+
+function parseCSV(file){
+  if(!file.name.endsWith('.csv')){toast('Sirf .csv file upload karo','error');return;}
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const lines = e.target.result.split('\n').map(l=>l.trim()).filter(l=>l);
+    const parsed = [];
+    // skip header if it contains 'name' text
+    const startIdx = lines[0].toLowerCase().includes('name') ? 1 : 0;
+    for(let i=startIdx;i<lines.length;i++){
+      const cols = lines[i].split(',').map(c=>c.trim());
+      if(!cols[0]) continue;
+      parsed.push({
+        name: cols[0] || '',
+        score: parseInt(cols[1]) || 0,
+        role: 'WebCrafter'
+      });
+    }
+    window._csvData = parsed;
+    showCSVPreview(parsed);
+  };
+  reader.readAsText(file);
+}
+
+function showCSVPreview(data){
+  if(!data.length){toast('CSV mein koi data nahi mila','error');return;}
+  document.getElementById('csvPreview').style.display='block';
+  document.getElementById('csvImportBtn').style.display='block';
+  document.getElementById('csvPreviewText').textContent = data.length + ' members milenge — preview:';
+  document.getElementById('csvPreviewList').innerHTML = data.slice(0,5).map(m=>
+    '<div style="padding:3px 0;border-bottom:1px solid var(--border)">'+m.name+' — '+m.score+' pts</div>'
+  ).join('') + (data.length>5 ? '<div style="color:var(--text3);padding-top:4px">...aur '+(data.length-5)+' more</div>' : '');
+}
+
+window.csvImport = async function(){
+  const data = window._csvData;
+  if(!data.length){toast('Pehle CSV upload karo','error');return;}
+  const btn = document.getElementById('csvImportBtn');
+  btn.textContent = 'Importing...';
+  btn.disabled = true;
+  let count = 0;
+  for(const m of data){
+    const existing = S.members.find(x=>x.name.toLowerCase()===m.name.toLowerCase());
+    if(existing){
+      await update(ref(db,'members/'+existing.id),{score:m.score,role:m.role});
+    } else {
+      await push(ref(db,'members'),{name:m.name,score:m.score,role:m.role,joinedAt:Date.now()});
+    }
+    count++;
+  }
+  btn.textContent = 'Import All Members';
+  btn.disabled = false;
+  document.getElementById('csvPreview').style.display='none';
+  document.getElementById('csvImportBtn').style.display='none';
+  document.getElementById('csvFileInput').value='';
+  window._csvData = [];
+  toast(count+' members imported!','success');
 }
 
 window.editMember = function(id,name,score,role){

@@ -663,8 +663,14 @@ const ADMIN_PASS = "WebCrafters@2024"; // CHANGE THIS
 // ---- FIREBASE LISTENERS ----
 onValue(ref(db,'members'), snap => {
   S.members = [];
-  snap.forEach(c => S.members.push({id:c.key,...c.val()}));
-  S.members.sort((a,b)=>b.score-a.score);
+  snap.forEach(c => {
+    const val = c.val();
+    if(val && val.name) S.members.push({id:c.key,...val});
+  });
+  S.members.sort((a,b)=>{
+    if(b.score !== a.score) return b.score - a.score;
+    return (a.joinedAt||0) - (b.joinedAt||0);
+  });
   renderAll();
 });
 

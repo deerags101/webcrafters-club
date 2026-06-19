@@ -699,6 +699,7 @@ footer{border-top:1px solid var(--border);padding:24px 2rem;text-align:center;fo
 <div class="img-modal" id="imgModal" onclick="closeImgModal()">
   <img id="imgModalSrc" src="" alt=""/>
   <div class="img-modal-info" id="imgModalInfo"></div>
+  <button id="imgModalDelete" onclick="event.stopPropagation();deleteCC()" style="display:none;background:#ff6b6b;color:white;border:none;padding:8px 18px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;margin-top:8px"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>
 
 <!-- TOAST -->
@@ -1166,11 +1167,20 @@ function renderCC(){
 window.viewCC = function(id){
   const item = S.ccItems.find(i=>i.id===id);
   if(!item||!item.imageData) return;
+  S.viewingCCId = id;
   document.getElementById('imgModalSrc').src=item.imageData;
   document.getElementById('imgModalInfo').innerHTML=`<strong>${item.title}</strong> by ${item.author} &middot; ${item.event||''}`;
+  document.getElementById('imgModalDelete').style.display = S.isAdmin ? 'inline-flex' : 'none';
   document.getElementById('imgModal').classList.add('open');
 }
-window.closeImgModal = function(){document.getElementById('imgModal').classList.remove('open');}
+window.closeImgModal = function(){document.getElementById('imgModal').classList.remove('open');S.viewingCCId=null;}
+window.deleteCC = function(){
+  if(!S.viewingCCId) return;
+  if(!confirm('Delete this creation? This cannot be undone.')) return;
+  remove(ref(db,'ccItems/'+S.viewingCCId));
+  toast('Deleted!','success');
+  closeImgModal();
+}
 
 // UPLOAD
 window.openUploadModal = function(){document.getElementById('uploadModal').classList.add('open');}

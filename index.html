@@ -518,6 +518,14 @@ footer{border-top:1px solid var(--border);padding:24px 2rem;text-align:center;fo
 .gunman.show .gm-arm-aim{transform:rotate(0deg) translateX(0)}
 .gunman.fire .gm-gun-grp{animation:gunmanRecoil .18s ease}
 @keyframes gunmanRecoil{0%{transform:translateX(0)}30%{transform:translateX(-9px) rotate(-2deg)}100%{transform:translateX(0)}}
+/* armed & holding — a slow menacing breathing glow while they wait for the next attempt */
+.gunman.armed .gm-figure{animation:gmArmedPulse 2.2s ease-in-out infinite}
+@keyframes gmArmedPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(212,43,43,0))}50%{filter:drop-shadow(0 0 10px rgba(212,43,43,0.5))}}
+/* chambering a round when the user starts a third attempt */
+.gunman.loaded .gm-gun-grp{animation:gunmanLoad .38s ease}
+@keyframes gunmanLoad{0%{transform:translateX(0)}40%{transform:translateX(7px) rotate(2deg)}70%{transform:translateX(-2px)}100%{transform:translateX(0)}}
+.gunman.loaded .gm-shell{opacity:1;animation:gunmanLoadEject .38s ease}
+@keyframes gunmanLoadEject{0%{opacity:0;transform:translate(0,0) rotate(0deg)}50%{opacity:1;transform:translate(10px,-4px) rotate(80deg)}100%{opacity:0;transform:translate(14px,2px) rotate(140deg)}}
 
 /* muzzle flash / smoke / shell / tracer on gunman */
 .gm-muzzle{opacity:0;transform-box:fill-box;transform-origin:50% 50%;transform:scale(.2)}
@@ -537,6 +545,17 @@ footer{border-top:1px solid var(--border);padding:24px 2rem;text-align:center;fo
 
 .gunman.drop{transition:transform .9s cubic-bezier(.45,0,.7,1), opacity .7s ease .35s;
   transform:translate(-50%,-38%) translateY(60vh) rotate(70deg);opacity:0}
+
+/* Surrender / final-warning banner */
+.spy-warning{position:absolute;left:50%;top:12%;transform:translate(-50%,-14px) scale(.92);opacity:0;
+  background:rgba(15,24,56,0.88);color:#fff3d6;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(15px,2.4vw,22px);letter-spacing:1px;text-transform:uppercase;text-align:center;
+  padding:12px 26px;border-radius:10px;border:2px solid var(--accent3);
+  box-shadow:0 12px 30px rgba(15,24,56,0.4);white-space:nowrap;
+  transition:opacity .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1)}
+.spy-warning.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.spy-warning.urgent{border-color:#ff5b5b;animation:warningPulse 0.9s ease-in-out infinite}
+@keyframes warningPulse{0%,100%{box-shadow:0 12px 30px rgba(15,24,56,0.4),0 0 0 rgba(212,43,43,0.4)}50%{box-shadow:0 12px 30px rgba(15,24,56,0.4),0 0 18px rgba(212,43,43,0.65)}}
 
 /* Speech bubble */
 .spy-bubble{position:absolute;left:150px;bottom:150px;background:#fff;border:2px solid var(--accent);
@@ -577,7 +596,7 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
   .spy-spider{width:40px;height:40px;margin-left:-20px}
 }
 @media (prefers-reduced-motion: reduce){
-  .spy-agent,.spy-bubble,.bullet-hole,.spy-spider,.spy-thread,.spy-crawler,.gunman,.gm-figure,.gm-cover,.gm-arm-aim,.impact-ring{transition:none !important;animation:none !important}
+  .spy-agent,.spy-bubble,.bullet-hole,.spy-spider,.spy-thread,.spy-crawler,.gunman,.gm-figure,.gm-cover,.gm-arm-aim,.impact-ring,.spy-warning{transition:none !important;animation:none !important}
   body.spy-shake-sm,body.spy-shake-big,body.spy-shake-shot{animation:none !important}
 }
 
@@ -3046,10 +3065,10 @@ window.initLearn = function(){
   }
 
   // ---- state ----
-  let layer=null, agent=null, bubble=null, vignette=null, flash=null;
+  let layer=null, agent=null, bubble=null, vignette=null, flash=null, warning=null;
   let spider=null, thread=null;
   const crawlers=[]; const gunmen=[]; const holes=[]; const dust=[];
-  let attempts=0, typingBound=false, swarmed=false;
+  let attempts=0, typingBound=false, swarmed=false, warned=false, retyping=false;
 
   function ensureLayer(){
     if(layer) return layer;
@@ -3139,16 +3158,33 @@ window.initLearn = function(){
     }, 60);
   }
 
-  // ---------- swarm + transform + fire ----------
+  // ---------- swarm + transform + surrender + fire ----------
   const GUN_SLOTS=[
     [50, 10], [86, 32], [78, 78], [12, 72], [8, 30], [50, 88]
   ];
 
-  function spawnCrawlerBurst(){
-    // corner the swarm erupts from
+  function showWarning(text, urgent){
+    hideWarning();
+    warning=document.createElement('div');
+    warning.className='spy-warning'+(urgent?' urgent':'');
+    warning.textContent=text;
+    layer.appendChild(warning);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>warning.classList.add('show')));
+  }
+  function hideWarning(){
+    if(warning){ warning.remove(); warning=null; }
+  }
+
+  function loadGuns(){
+    gunmen.forEach((g,i)=> setTimeout(()=>{
+      g.classList.add('loaded');
+      setTimeout(()=>g.classList.remove('loaded'), 380);
+    }, i*90));
+  }
+
+  function spawnCrawlerBurst(onSettled){
     const cornerX = Math.random()<0.5 ? 4 : 96;
     const cornerY = Math.random()<0.5 ? 6 : 94;
-    // filler crawlers that just cover the interface for atmosphere
     const N=22;
     for(let i=0;i<N;i++){
       setTimeout(()=>{
@@ -3160,13 +3196,12 @@ window.initLearn = function(){
         c.style.setProperty('--cx1', (tx/100*window.innerWidth)+'px');
         c.style.setProperty('--cy1', (ty/100*window.innerHeight)+'px');
         c.style.setProperty('--crot', (Math.random()*360).toFixed(0)+'deg');
-        c.style.setProperty('--cdur', (0.7+Math.random()*0.6).toFixed(2)+'s');
+        c.style.setProperty('--cdur', (1.3+Math.random()*0.8).toFixed(2)+'s');
         c.innerHTML=spiderSVG();
         layer.appendChild(c); crawlers.push(c);
         requestAnimationFrame(()=>c.classList.add('go'));
-      }, i*28);
+      }, 150 + i*70);
     }
-    // the shooters: crawl to the fixed gun slots, then fade as they morph
     GUN_SLOTS.forEach((s,i)=>{
       setTimeout(()=>{
         const c=document.createElement('div');
@@ -3176,18 +3211,19 @@ window.initLearn = function(){
         c.style.setProperty('--cx1', (s[0]/100*window.innerWidth)+'px');
         c.style.setProperty('--cy1', (s[1]/100*window.innerHeight)+'px');
         c.style.setProperty('--crot', (Math.random()*360).toFixed(0)+'deg');
-        c.style.setProperty('--cdur','0.85s');
+        c.style.setProperty('--cdur','1.6s');
         c.innerHTML=spiderSVG();
         layer.appendChild(c); crawlers.push(c);
         requestAnimationFrame(()=>c.classList.add('go'));
-        setTimeout(()=> spawnGunman(s[0], s[1], c), 900);
-      }, 40 + i*70);
+        setTimeout(()=> spawnGunman(s[0], s[1], c), 1650);
+      }, 500 + i*380);
     });
-    // fade the atmosphere crawlers away as the shooters take position
+    const lastShooter = 500 + (GUN_SLOTS.length-1)*380 + 1650 + 300;
     setTimeout(()=>{
       crawlers.forEach(c=>{ if(!c.dataset.morphed) c.classList.add('fade'); });
-      setTimeout(()=>{ crawlers.forEach(c=>c.remove()); crawlers.length=0; }, 500);
-    }, 1500);
+      setTimeout(()=>{ crawlers.forEach(c=>c.remove()); crawlers.length=0; }, 550);
+      if(onSettled) onSettled();
+    }, lastShooter);
   }
 
   function spawnGunman(leftPct, topPct, ghostCrawler){
@@ -3199,27 +3235,30 @@ window.initLearn = function(){
     g.innerHTML =
       '<div class="gm-cover"></div>'+
       '<div class="gm-figure" style="transform-origin:50% 100%">'+gunmanSVG()+'</div>';
-    // orient the whole unit slightly toward screen center for a cinematic converging feel
     g.style.setProperty('--gmr', (rot*0.06).toFixed(1)+'deg');
     layer.appendChild(g); gunmen.push(g);
-    if(ghostCrawler){ ghostCrawler.dataset.morphed='1'; ghostCrawler.classList.add('fade'); setTimeout(()=>ghostCrawler.remove(),500); }
-    requestAnimationFrame(()=>requestAnimationFrame(()=>g.classList.add('show')));
+    if(ghostCrawler){ ghostCrawler.dataset.morphed='1'; ghostCrawler.classList.add('fade'); setTimeout(()=>ghostCrawler.remove(),550); }
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      g.classList.add('show');
+      setTimeout(()=>g.classList.add('armed'), 900);
+    }));
   }
 
   function fireAllGunmen(){
     layer.classList.add('tense');
     gunmen.forEach((g,i)=>{
       setTimeout(()=>{
+        g.classList.remove('armed');
         g.classList.add('fire');
         shake('shot');
-      }, i*90);
+      }, i*170);
     });
-    const total=gunmen.length*90+180;
+    const total=gunmen.length*170+220;
     setTimeout(()=>{
       if(flash){ flash.classList.remove('go','redpulse'); void flash.offsetWidth; flash.classList.add('go','redpulse'); }
       shake('big');
       spawnHoles();
-    }, Math.min(total, 260));
+    }, total);
   }
 
   function spawnHoles(){
@@ -3252,9 +3291,16 @@ window.initLearn = function(){
     typingBound=true;
   }
   function onType(){
-    // typing never triggers guns or gunfire — only the Submit press does.
-    // while a wrong attempt is pending, the watching spider grows visibly agitated.
-    if(attempts>=1 && spider && !swarmed) spiderAlert();
+    // typing never fires a shot — only the Submit press does.
+    if(attempts===1 && spider && !swarmed){
+      // watching spider grows visibly agitated as the user tries again
+      spiderAlert();
+    } else if(attempts>=2 && swarmed && !warned && !retyping){
+      // the user is retyping for a third try: chamber the rounds and give one last warning
+      retyping=true;
+      loadGuns();
+      setTimeout(()=>{ showWarning('FINAL WARNING — LAST CHANCE', true); warned=true; }, 420);
+    }
   }
 
   // ---- public API ----
@@ -3262,7 +3308,7 @@ window.initLearn = function(){
     start(){
       ensureLayer();
       this.cleanup(true);
-      attempts=0; swarmed=false;
+      attempts=0; swarmed=false; warned=false; retyping=false;
       const err=document.getElementById('pinErr'); if(err) err.style.display='none';
       const inp=document.getElementById('adminPinInput'); if(inp) inp.value='';
       if(reduce) return;
@@ -3271,6 +3317,11 @@ window.initLearn = function(){
       bindTyping();
     },
 
+    // attempt 1 (wrong): a single spider descends and watches — no weapons.
+    // attempt 2 (wrong): the swarm erupts and transforms into armed characters who
+    //   take aim and demand surrender — they do NOT fire yet.
+    // retyping after that: guns are chambered and one final warning is shown.
+    // attempt 3 (wrong): they open fire.
     wrong(){
       if(reduce) return;
       attempts++;
@@ -3279,25 +3330,35 @@ window.initLearn = function(){
       bindTyping();
 
       if(attempts===1){
-        // a single spider descends and watches — no weapons yet
         spawnSpider();
         setTimeout(()=>shake('sm'), 900);
+      } else if(attempts===2){
+        this.escalateToSurrender();
       } else {
-        // second wrong password confirmed: the swarm erupts, transforms, and opens fire
-        this.escalateAndFire();
+        // third wrong password: if they haven't seen the final warning yet
+        // (e.g. they hit Enter again without editing the field), show it now,
+        // then fire — otherwise the suspense has already been built, fire now.
+        retyping=false;
+        if(!warned){
+          loadGuns();
+          showWarning('FINAL WARNING — LAST CHANCE', true);
+          warned=true;
+          setTimeout(()=>this.fire(), 1000);
+        } else {
+          this.fire();
+        }
       }
     },
 
-    escalateAndFire(){
+    escalateToSurrender(){
       if(reduce || swarmed) return;
       swarmed=true;
       spiderAlert();
       retractSpider();
       layer.classList.add('tense');
-      spawnCrawlerBurst();
-      // fire once every shooter has risen into their aiming pose
-      const riseTime = GUN_SLOTS.length*70 + 900 + 450;
-      setTimeout(()=> this.fire(), riseTime);
+      spawnCrawlerBurst(()=>{
+        showWarning('SURRENDER — DO NOT TRY AGAIN', false);
+      });
     },
 
     success(reveal){
@@ -3305,8 +3366,9 @@ window.initLearn = function(){
       ensureLayer(); layer.classList.add('active');
       if(!agent){ sneakIn(); }
       layer.classList.remove('tense');
+      hideWarning();
       if(spider) retractSpider();
-      gunmen.forEach((g,i)=> setTimeout(()=>{ g.classList.remove('show'); g.classList.add('drop'); }, i*60));
+      gunmen.forEach((g,i)=> setTimeout(()=>{ g.classList.remove('show','armed'); g.classList.add('drop'); }, i*60));
       setTimeout(()=>{
         if(agent) agent.classList.add('salute');
         bubble=document.createElement('div');
@@ -3321,14 +3383,20 @@ window.initLearn = function(){
 
     fire(){
       if(reduce) return;
-      fireAllGunmen();
+      hideWarning();
+      if(gunmen.length===0){
+        // safety net: guns weren't already up (edge case) — put them up fast, then fire
+        spawnCrawlerBurst(()=> fireAllGunmen());
+      } else {
+        fireAllGunmen();
+      }
       setTimeout(()=>{
         if(typeof window.toggleAdmin==='function' && document.getElementById('adminOverlay').classList.contains('open')){
           window.toggleAdmin();
         } else {
           this.cleanup();
         }
-      }, 1450);
+      }, 1650);
     },
 
     cleanup(keepLayer){
@@ -3340,8 +3408,9 @@ window.initLearn = function(){
       if(thread){ thread.remove(); thread=null; }
       if(agent){ agent.remove(); agent=null; }
       if(bubble){ bubble.remove(); bubble=null; }
+      hideWarning();
       document.body.classList.remove('spy-shake-sm','spy-shake-big','spy-shake-shot');
-      attempts=0; swarmed=false;
+      attempts=0; swarmed=false; warned=false; retyping=false;
       const inp=document.getElementById('adminPinInput');
       if(inp && typingBound){ inp.removeEventListener('input', onType); typingBound=false; }
       if(layer){

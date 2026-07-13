@@ -1713,7 +1713,9 @@ window.qzAdminStart = function(){
   if(!S.qz || !S.qz.questions || !S.qz.questions.length){toast('Save quiz setup first','error');return;}
   remove(ref(db,'compQuizSubs'));
   update(ref(db,'compQuiz'),{status:'live',startedAt:Date.now()});
-  toast('Quiz started! Anti-cheat is active for participants.','success');
+  const durMin = Math.round((S.qz.durationSec||0)/60);
+  set(ref(db,'announcement'),{text:`🧠 Quiz "${S.qz.title}" (${S.qz.club||''}) is LIVE now! Go to Activities → Quiz Competition to join. Duration: ${durMin} min.`,ts:Date.now(),dur:0});
+  toast('Quiz started! Announcement broadcasted to everyone.','success');
 }
 window.qzAdminStop = function(){
   update(ref(db,'compQuiz'),{status:'ended'});

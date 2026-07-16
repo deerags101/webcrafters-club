@@ -174,6 +174,7 @@ h1.hero-title{font-family:var(--font-display);font-size:clamp(40px,7vw,76px);fon
 .a-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
 .a-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .a-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.field-label{font-size:11px;color:var(--text2);font-weight:700;margin:8px 0 3px;display:block}
 .a-label i{font-size:12px}
 .a-input{background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:8px 12px;border-radius:8px;outline:none;width:100%;margin-bottom:8px}
 .a-input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(245,166,35,0.12)}
@@ -644,6 +645,12 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
 .slot-num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
 .claim-btn{margin-left:auto;background:var(--accent2);color:#fff;border:none;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer}
 @keyframes lbpulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.learner-id-bar{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:18px;font-size:13px;flex-wrap:wrap}
+.learner-id-bar input{flex:1;min-width:160px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px;font-family:var(--font-body);outline:none}
+.learner-id-bar .lid-change{background:none;border:none;color:var(--accent2);font-weight:700;cursor:pointer;font-size:12px}
+.mem-badges-row{display:flex;gap:4px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.mem-badge-chip{font-size:14px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:20px;padding:2px 6px}
+.admin-learn-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
 
 </style>
 
@@ -1092,9 +1099,31 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
         <div class="a-label"><i class="fa-solid fa-brain"></i> Quiz Competition</div>
         <input class="a-input" id="qzClub" placeholder="Club / activity name (e.g. Poster Making Club)"/>
         <input class="a-input" id="qzTitle" placeholder="Quiz title"/>
+        <span class="field-label">⏱ Total quiz duration (for the WHOLE quiz, not per question)</span>
         <input class="a-input" id="qzDur" type="number" placeholder="Duration (minutes)" value="10"/>
         <div id="qzAdminQList"></div>
-        <button class="btn btn-ghost btn-sm btn-full" style="margin-bottom:8px" onclick="qzAdminAddQ()"><i class="fa-solid fa-plus"></i> Add Question</button>
+        <button class="btn btn-ghost btn-sm btn-full" style="margin-bottom:8px" onclick="qzAdminAddQ()"><i class="fa-solid fa-plus"></i> Add Question (manual)</button>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px"><i class="fa-solid fa-bolt"></i> Bulk Add (paste many at once)</div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:6px;line-height:1.5">One question per block, blank line between blocks. Format:<br>Question text<br>Option A<br>Option B<br>Option C<br>Option D<br>Correct: A (or 1, or the exact option text)</div>
+          <textarea class="a-input" id="qzBulkText" rows="6" placeholder="What is HTML?
+HyperText Markup Language
+High Tech Modern Language
+Home Tool Markup Language
+Hyperlinks Text Mark Language
+1
+
+What does CSS stand for?
+Cascading Style Sheets
+Colorful Style Sheets
+Creative Style System
+Computer Style Sheets
+A"></textarea>
+          <div class="a-row2">
+            <button class="btn btn-primary btn-sm" onclick="qzBulkAdd()"><i class="fa-solid fa-list-check"></i> Parse & Add All</button>
+            <button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="qzClearAll()"><i class="fa-solid fa-trash"></i> Clear All Questions</button>
+          </div>
+        </div>
         <div class="a-row2">
           <button class="btn btn-primary btn-sm" onclick="qzAdminSave()"><i class="fa-solid fa-floppy-disk"></i> Save Setup</button>
           <button class="btn btn-green btn-sm" onclick="qzAdminStart()"><i class="fa-solid fa-play"></i> Start Quiz</button>
@@ -1107,17 +1136,32 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
       <!-- DEBATE ADMIN -->
       <div class="a-section">
         <div class="a-label"><i class="fa-solid fa-microphone-lines"></i> Debate Battle</div>
-        <input class="a-input" id="dbTitle" placeholder="Debate title"/>
-        <textarea class="a-input" id="dbTopics" placeholder="Topics (one per line)"></textarea>
+        <span class="field-label">📌 Debate title</span>
+        <input class="a-input" id="dbTitle" placeholder="e.g. Inter-Team Debate Championship"/>
+        <span class="field-label">📋 Topics — one per line. Each battle gets one topic (round-robin)</span>
+        <textarea class="a-input" id="dbTopics" placeholder="Should AI replace teachers?&#10;Is social media good for society?"></textarea>
+        <span class="field-label">👥 Add a team — members in the ORDER they'll speak</span>
         <div class="a-row2">
           <input class="a-input" id="dbTeamName" placeholder="Team name"/>
-          <input class="a-input" id="dbTeamMembers" placeholder="Members (comma separated)"/>
+          <input class="a-input" id="dbTeamMembers" placeholder="Member1, Member2, Member3 (speaking order!)"/>
         </div>
-        <button class="btn btn-ghost btn-sm btn-full" onclick="dbAdminAddTeam()"><i class="fa-solid fa-plus"></i> Add Team</button>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="dbAdminAddTeam()"><i class="fa-solid fa-plus"></i> Add Team Manually</button>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin:10px 0">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px"><i class="fa-solid fa-bullhorn"></i> Let members self-register their own team</div>
+          <button class="btn btn-sm btn-full" id="dbRegToggleBtn" onclick="dbRegToggle()"><i class="fa-solid fa-lock-open"></i> Open Registration</button>
+          <div id="dbRegList" style="margin-top:8px"></div>
+        </div>
         <div id="dbAdminTeamList" style="margin:8px 0"></div>
-        <input class="a-input" id="dbTurnDur" type="number" placeholder="Speaking time per member (seconds)" value="90"/>
+        <span class="field-label">⏱ Speaking time PER MEMBER, in seconds (not the whole debate — e.g. 90 = each speaker gets 90 sec)</span>
+        <input class="a-input" id="dbTurnDur" type="number" placeholder="e.g. 90" value="90"/>
         <button class="btn btn-primary btn-sm btn-full" onclick="dbAdminRandomize()"><i class="fa-solid fa-shuffle"></i> Randomize & Create Battles</button>
         <div id="dbAdminBattles" style="margin-top:12px"></div>
+      </div>
+
+      <!-- LEARNING PROGRESS -->
+      <div class="a-section">
+        <div class="a-label"><i class="fa-solid fa-graduation-cap"></i> Learning Progress</div>
+        <div style="max-height:220px;overflow-y:auto" id="adminLearnList"></div>
       </div>
     </div>
   </div>
@@ -1178,6 +1222,8 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
       <div class="learn-title">Learn <span>WebDev</span></div>
       <p class="learn-sub">Structured lessons with live coding. Pick a track, start learning!</p>
     </div>
+
+    <div id="learnerIdBar"></div>
 
     <!-- TRACK TABS -->
     <div class="track-tabs">
@@ -1430,12 +1476,15 @@ function renderRankTable(){
 function renderMemberGrid(){
   const grid = document.getElementById('memberGrid');
   const m = S.members;
+  if(!grid) return;
   if(!m.length){grid.innerHTML='<div class="mem-empty"><i class="fa-solid fa-users"></i>No members yet</div>';return;}
   const RANK_BADGES = [{bg:'var(--gold)',txt:'#070b14',icon:'👑'},{bg:'var(--silver)',txt:'#070b14',icon:'🥈'},{bg:'var(--bronze)',txt:'#fff',icon:'🥉'}];
   grid.innerHTML = m.map((mem,i)=>{
     const col = getColor(mem.name);
     const rb = RANK_BADGES[i];
     const badgeHtml = rb ? `<div class="mem-rank-badge" style="background:${rb.bg};color:${rb.txt}">${rb.icon}</div>` : '';
+    const lp = (S.learnProgress||{})[learnerKey(mem.name)];
+    const learnBadges = lp && lp.badges && lp.badges.length ? `<div class="mem-badges-row" title="Learning badges">${lp.badges.map(b=>`<span class="mem-badge-chip">${b.icon}</span>`).join('')}</div>` : '';
     return `<div class="mem-card">
       <div class="mem-avatar" style="border-color:${col};background:${col}22;color:${col}">
         ${initials(mem.name)}
@@ -1444,6 +1493,7 @@ function renderMemberGrid(){
       <div class="mem-name">${mem.name}</div>
       <div class="mem-role">${mem.role||'WebCrafter'}</div>
       <div class="mem-score-tag"><i class="fa-solid fa-star" style="font-size:10px"></i> ${mem.score} pts</div>
+      ${learnBadges}
     </div>`;
   }).join('');
 }
@@ -1670,22 +1720,55 @@ function updateLiveBanner(){
 }
 
 /* ---------------- QUIZ: ADMIN ---------------- */
-window.qzAdminAddQ = function(){
+function qzAddQBlock(prefill){
   const list = document.getElementById('qzAdminQList');
   if(!list) return;
+  const p = prefill || {q:'',opts:['','','',''],correct:0};
   const div = document.createElement('div');
   div.className='qz-admin-q';
   div.innerHTML = `
-    <input class="a-input" placeholder="Question text" data-role="q"/>
-    <input class="a-input" placeholder="Option A" data-role="o0"/>
-    <input class="a-input" placeholder="Option B" data-role="o1"/>
-    <input class="a-input" placeholder="Option C" data-role="o2"/>
-    <input class="a-input" placeholder="Option D" data-role="o3"/>
+    <input class="a-input" placeholder="Question text" data-role="q" value="${escapeHtml(p.q)}"/>
+    <input class="a-input" placeholder="Option A" data-role="o0" value="${escapeHtml(p.opts[0]||'')}"/>
+    <input class="a-input" placeholder="Option B" data-role="o1" value="${escapeHtml(p.opts[1]||'')}"/>
+    <input class="a-input" placeholder="Option C" data-role="o2" value="${escapeHtml(p.opts[2]||'')}"/>
+    <input class="a-input" placeholder="Option D" data-role="o3" value="${escapeHtml(p.opts[3]||'')}"/>
     <select class="a-input" data-role="correct">
-      <option value="0">Correct answer: A</option><option value="1">Correct answer: B</option><option value="2">Correct answer: C</option><option value="3">Correct answer: D</option>
+      <option value="0" ${p.correct===0?'selected':''}>Correct answer: A</option><option value="1" ${p.correct===1?'selected':''}>Correct answer: B</option><option value="2" ${p.correct===2?'selected':''}>Correct answer: C</option><option value="3" ${p.correct===3?'selected':''}>Correct answer: D</option>
     </select>
     <button class="btn btn-sm btn-full" style="background:#c0392b;color:#fff" onclick="this.parentElement.remove()">Remove Question</button>`;
   list.appendChild(div);
+}
+window.qzAdminAddQ = function(){ qzAddQBlock(); }
+window.qzClearAll = function(){
+  if(!confirm('Remove all questions from the list?')) return;
+  const list = document.getElementById('qzAdminQList');
+  if(list) list.innerHTML='';
+}
+function qzParseAnswerToken(tok, opts){
+  tok = (tok||'').replace(/^(correct answer|correct|ans(wer)?)\s*[:\-]?\s*/i,'').trim();
+  if(/^[A-Da-d]$/.test(tok)) return tok.toUpperCase().charCodeAt(0)-65;
+  if(/^[1-4]$/.test(tok)) return parseInt(tok,10)-1;
+  const idx = opts.findIndex(o=>o.trim().toLowerCase()===tok.toLowerCase());
+  return idx>=0 ? idx : 0;
+}
+window.qzBulkAdd = function(){
+  const raw = document.getElementById('qzBulkText').value;
+  if(!raw.trim()){toast('Paste some questions first','error');return;}
+  const blocks = raw.split(/\n\s*\n+/).map(b=>b.trim()).filter(Boolean);
+  let added=0, skipped=0;
+  blocks.forEach(block=>{
+    const lines = block.split('\n').map(l=>l.trim()).filter(Boolean);
+    if(lines.length<6){ skipped++; return; }
+    const q = lines[0].replace(/^Q[:\.\)]\s*/i,'');
+    const opts = lines.slice(1,5).map(l=>l.replace(/^[A-Da-d1-4][\).:]\s*/,''));
+    const correct = qzParseAnswerToken(lines[5], opts);
+    if(!q || opts.some(o=>!o)){ skipped++; return; }
+    qzAddQBlock({q,opts,correct});
+    added++;
+  });
+  document.getElementById('qzBulkText').value='';
+  if(added) toast(`${added} question(s) added${skipped?`, ${skipped} skipped (bad format)`:''}`,'success');
+  else toast('Nothing added — check the format and try again','error');
 }
 function qzCollectDraft(){
   const list = document.getElementById('qzAdminQList');
@@ -1899,20 +1982,80 @@ window.dbAdminRandomize = function(){
   for(let i=0;i<teams.length-1;i+=2){
     const a=teams[i], b=teams[i+1];
     const topic = topics.length? topics[battles.length%topics.length] : '';
-    battles.push({teamA:a.name, teamB:b.name, membersA:a.members, membersB:b.members, topic, link:'', speakers:null, currentIndex:0, turnStartedAt:null, status:'setup'});
+    battles.push({teamA:a.name, teamB:b.name, membersA:a.members, membersB:b.members, topic, link:'', speakers:null, currentIndex:0, turnStartedAt:null, status:'setup', winner:null, isThirdPlace:false});
   }
   if(teams.length%2===1) toast(`${teams[teams.length-1].name} sits out this round (odd team count)`,'success');
-  set(ref(db,'debate'),{title,topics,teams,turnDurationSec:turnDur,battles,activeBattle:null});
+  set(ref(db,'debate'),{title,topics,teams,turnDurationSec:turnDur,battles,activeBattle:null,round:1,roundLabel: battles.length>1?'Round 1':'Final',completed:false,standings:null});
   S.dbDraftTeams=[];
   renderDbAdminTeamList();
   toast('Battles created & randomized!','success');
+}
+function dbTopicFor(idx){
+  const topics = (S.debate&&S.debate.topics)||[];
+  return topics.length? topics[idx%topics.length] : '';
+}
+window.dbSetWinner = function(i, side){
+  const b = S.debate.battles[i];
+  const winnerName = side==='A' ? b.teamA : b.teamB;
+  update(ref(db,'debate/battles/'+i),{winner:winnerName});
+}
+window.dbClearWinner = function(i){ update(ref(db,'debate/battles/'+i),{winner:null}); }
+window.dbAdvanceRound = function(){
+  const battles = S.debate.battles||[];
+  const main = battles.filter(b=>!b.isThirdPlace);
+  const third = battles.find(b=>b.isThirdPlace);
+  if(main.some(b=>!b.winner)){ toast('Declare a winner for every battle first','error'); return; }
+  if(third && !third.winner){ toast('Declare the 3rd place match winner too','error'); return; }
+  const teamsLookup = {};
+  (S.debate.teams||[]).forEach(t=>teamsLookup[t.name]=t.members||[]);
+  battles.forEach(b=>{ teamsLookup[b.teamA]=teamsLookup[b.teamA]||b.membersA; teamsLookup[b.teamB]=teamsLookup[b.teamB]||b.membersB; });
+  const winners = main.map(b=>b.winner);
+  const losers = main.map(b=> b.winner===b.teamA ? b.teamB : b.teamA);
+  if(winners.length<=1){
+    const standings = { first:winners[0], second:losers[0], third: third? third.winner : null };
+    set(ref(db,'debate'),Object.assign({},S.debate,{completed:true,standings,activeBattle:null}));
+    toast('🏆 Tournament complete! Standings are in.','success');
+    return;
+  }
+  if(winners.length===2){
+    const finalBattle = {teamA:winners[0],teamB:winners[1],membersA:teamsLookup[winners[0]]||[],membersB:teamsLookup[winners[1]]||[],topic:dbTopicFor(0),link:'',speakers:null,currentIndex:0,turnStartedAt:null,status:'setup',winner:null,isThirdPlace:false};
+    const thirdBattle = {teamA:losers[0],teamB:losers[1],membersA:teamsLookup[losers[0]]||[],membersB:teamsLookup[losers[1]]||[],topic:dbTopicFor(1),link:'',speakers:null,currentIndex:0,turnStartedAt:null,status:'setup',winner:null,isThirdPlace:true};
+    set(ref(db,'debate'),Object.assign({},S.debate,{battles:[finalBattle,thirdBattle],round:(S.debate.round||1)+1,roundLabel:'Final & 3rd Place',activeBattle:null,completed:false,standings:null}));
+    toast('Final & 3rd Place match created!','success');
+    return;
+  }
+  const nextBattles=[];
+  for(let i=0;i<winners.length-1;i+=2){
+    nextBattles.push({teamA:winners[i],teamB:winners[i+1],membersA:teamsLookup[winners[i]]||[],membersB:teamsLookup[winners[i+1]]||[],topic:dbTopicFor(nextBattles.length),link:'',speakers:null,currentIndex:0,turnStartedAt:null,status:'setup',winner:null,isThirdPlace:false});
+  }
+  const newRound = (S.debate.round||1)+1;
+  set(ref(db,'debate'),Object.assign({},S.debate,{battles:nextBattles,round:newRound,roundLabel:'Round '+newRound,activeBattle:null,completed:false,standings:null}));
+  toast('Next round created!','success');
+}
+function dbAllWinnersDeclared(){
+  const battles = (S.debate&&S.debate.battles)||[];
+  return battles.length>0 && battles.every(b=>!!b.winner);
+}
+function renderStandingsHtml(){
+  if(!S.debate || !S.debate.completed || !S.debate.standings) return '';
+  const st = S.debate.standings;
+  return `<div class="battle-card" style="text-align:center">
+    <div class="battle-vs">🏆 Final Standings</div>
+    <div style="font-size:15px;margin:10px 0"><span style="color:var(--gold)">🥇 1st</span> — <b>${escapeHtml(st.first||'-')}</b></div>
+    <div style="font-size:14px;margin:6px 0"><span style="color:var(--silver)">🥈 2nd</span> — <b>${escapeHtml(st.second||'-')}</b></div>
+    ${st.third?`<div style="font-size:13px;margin:6px 0"><span style="color:var(--bronze)">🥉 3rd</span> — <b>${escapeHtml(st.third)}</b></div>`:''}
+  </div>`;
 }
 function renderDbAdminBattles(){
   const el = document.getElementById('dbAdminBattles');
   if(!el) return;
   if(!S.debate || !S.debate.battles || !S.debate.battles.length){ el.innerHTML=''; return; }
-  el.innerHTML = S.debate.battles.map((b,i)=>`
+  let html = `<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--accent)">${escapeHtml(S.debate.roundLabel||'Round 1')}</div>`;
+  html += renderStandingsHtml();
+  if(!S.debate.completed){
+    html += S.debate.battles.map((b,i)=>`
     <div class="battle-card">
+      ${b.isThirdPlace?'<div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">🥉 3RD PLACE MATCH</div>':''}
       <div class="battle-vs">${escapeHtml(b.teamA)} 🆚 ${escapeHtml(b.teamB)} <span style="font-size:11px;color:var(--text3)">(${escapeHtml(b.topic||'no topic')})</span></div>
       <input class="a-input" placeholder="Meeting link (Google Meet / Discord)" value="${escapeHtml(b.link||'')}" onchange="dbAdminSetLink(${i},this.value)"/>
       <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Status: <b>${b.status}</b></div>
@@ -1921,7 +2064,18 @@ function renderDbAdminBattles(){
         <button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="dbAdminEndBattle(${i})"><i class="fa-solid fa-stop"></i> End</button>
       </div>
       ${b.status==='live'?`<button class="btn btn-primary btn-sm btn-full" style="margin-top:6px" onclick="dbAdminNext(${i})"><i class="fa-solid fa-forward"></i> Force Next Speaker</button>`:''}
+      ${renderSpeakersHtml(b,i,'a',null)}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        ${b.winner ? `<div style="font-size:12px;font-weight:700;color:#1a9e5c">🏆 Winner: ${escapeHtml(b.winner)} <button class="lid-change" onclick="dbClearWinner(${i})">change</button></div>` :
+        `<div style="font-size:10px;color:var(--text3);margin-bottom:4px">Declare winner (judge's call):</div>
+        <div class="a-row2"><button class="btn btn-sm" onclick="dbSetWinner(${i},'A')">🏆 ${escapeHtml(b.teamA)}</button><button class="btn btn-sm" onclick="dbSetWinner(${i},'B')">🏆 ${escapeHtml(b.teamB)}</button></div>`}
+      </div>
     </div>`).join('');
+    if(dbAllWinnersDeclared()){
+      html += `<button class="btn btn-primary btn-full" onclick="dbAdvanceRound()"><i class="fa-solid fa-forward-step"></i> Advance to Next Round</button>`;
+    }
+  }
+  el.innerHTML = html;
 }
 window.dbAdminSetLink = function(i,val){ update(ref(db,'debate/battles/'+i),{link:val}); }
 window.dbAdminStartBattle = function(i){
@@ -1948,35 +2102,131 @@ function dbAdvance(i){
     update(ref(db,'debate/battles/'+i),{currentIndex:next,turnStartedAt:Date.now()});
   }
 }
+window.dbSkipTurn = function(i){
+  if(!confirm('Skip your turn now? Next speaker will start immediately.')) return;
+  dbAdvance(i);
+}
+
+/* ---------------- DEBATE: SELF-REGISTRATION ---------------- */
+window.dbRegToggle = function(){
+  const cur = !!(S.debateReg && S.debateReg.open);
+  set(ref(db,'debateReg/open'), !cur);
+}
+function renderDbRegAdmin(){
+  const btn = document.getElementById('dbRegToggleBtn');
+  if(btn) btn.innerHTML = (S.debateReg && S.debateReg.open) ? '<i class="fa-solid fa-lock"></i> Close Registration' : '<i class="fa-solid fa-lock-open"></i> Open Registration';
+  const el = document.getElementById('dbRegList');
+  if(!el) return;
+  const teams = Object.entries((S.debateReg && S.debateReg.teams) || {});
+  if(!teams.length){ el.innerHTML = '<div style="font-size:11px;color:var(--text3)">No self-registered teams yet</div>'; return; }
+  el.innerHTML = teams.map(([k,t])=>`<div class="dbt-team-chip">${escapeHtml(t.name)} (${(t.members||[]).length}) <button onclick="dbRegImport('${k}')" style="color:#1a9e5c;font-weight:800">＋add</button> <button onclick="dbRegRemove('${k}')">×</button></div>`).join('');
+}
+window.dbRegImport = function(k){
+  const t = S.debateReg && S.debateReg.teams && S.debateReg.teams[k];
+  if(!t) return;
+  S.dbDraftTeams.push({name:t.name, members:t.members||[]});
+  renderDbAdminTeamList();
+  remove(ref(db,'debateReg/teams/'+k));
+  toast(`"${t.name}" added to the battle list below`,'success');
+}
+window.dbRegRemove = function(k){ remove(ref(db,'debateReg/teams/'+k)); }
+function renderDbRegForm(){
+  if(!S.debateReg || !S.debateReg.open) return '';
+  if(localStorage.getItem('wc_regDone')){
+    return `<div class="battle-card"><div style="font-weight:700;color:#1a9e5c"><i class="fa-solid fa-circle-check"></i> Your team is registered! Wait for admin to create the battles.</div></div>`;
+  }
+  return `<div class="battle-card">
+    <div class="battle-vs">📝 Register Your Team</div>
+    <span class="field-label">Team name</span>
+    <input class="a-input" id="regTeamName" placeholder="e.g. Team Falcons"/>
+    <span class="field-label">Your members, comma separated, in the order you'll speak</span>
+    <input class="a-input" id="regMembers" placeholder="Riya, Aman, Priya"/>
+    <button class="btn btn-primary btn-sm btn-full" onclick="dbRegSubmit()"><i class="fa-solid fa-paper-plane"></i> Register Team</button>
+  </div>`;
+}
+window.dbRegSubmit = function(){
+  const name = document.getElementById('regTeamName').value.trim();
+  const membersStr = document.getElementById('regMembers').value.trim();
+  if(!name || !membersStr){toast('Enter team name & members','error');return;}
+  const members = membersStr.split(',').map(m=>m.trim()).filter(Boolean);
+  const newRef = push(ref(db,'debateReg/teams'));
+  set(newRef,{name,members,registeredAt:Date.now()});
+  localStorage.setItem('wc_regDone','1');
+  toast('Team registered! Admin will include you in the battles.','success');
+  renderDbParticipant();
+}
+onValue(ref(db,'debateReg'), snap=>{
+  S.debateReg = snap.val()||{};
+  renderDbRegAdmin();
+  renderDbParticipant();
+});
 
 /* ---------------- DEBATE: PARTICIPANT ---------------- */
+function renderDebaterIdBar(){
+  const name = localStorage.getItem('wc_debaterName');
+  if(!name){
+    return `<div class="learner-id-bar">
+      <i class="fa-solid fa-user" style="color:var(--text3)"></i>
+      <input type="text" id="debaterNameInput" placeholder="Enter your name (so you can Skip Your Turn if needed)"/>
+      <button class="btn btn-primary btn-sm" onclick="setDebaterName()">Save</button>
+    </div>`;
+  }
+  return `<div class="learner-id-bar"><i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> You are <b>${escapeHtml(name)}</b>
+    <button class="lid-change" onclick="changeDebaterName()">change</button></div>`;
+}
+window.setDebaterName = function(){
+  const v = document.getElementById('debaterNameInput').value.trim();
+  if(!v){toast('Enter your name first','error');return;}
+  localStorage.setItem('wc_debaterName', v);
+  renderDbParticipant();
+}
+window.changeDebaterName = function(){
+  localStorage.removeItem('wc_debaterName');
+  renderDbParticipant();
+}
 function renderDbParticipant(){
   const root = document.getElementById('dbRoot');
   if(!root) return;
+  const myName = localStorage.getItem('wc_debaterName');
+  let html = `<div style="font-weight:700;font-size:18px;margin-bottom:14px">${escapeHtml(S.debate?.title||'Debate')}</div>`;
+  html += renderDbRegForm();
+  html += renderDebaterIdBar();
   if(!S.debate || !S.debate.battles || !S.debate.battles.length){
-    root.innerHTML = `<div class="qz-wait"><i class="fa-solid fa-hourglass-half"></i>No debate battles scheduled yet.</div>`;
+    html += `<div class="qz-wait"><i class="fa-solid fa-hourglass-half"></i>No debate battles scheduled yet.</div>`;
+    root.innerHTML = html;
     return;
   }
-  let html = `<div style="font-weight:700;font-size:18px;margin-bottom:14px">${escapeHtml(S.debate.title||'Debate')}</div>`;
-  S.debate.battles.forEach((b,i)=>{ html += renderBattleCard(b,i); });
+  html += `<div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px">${escapeHtml(S.debate.roundLabel||'Round 1')}</div>`;
+  html += renderStandingsHtml();
+  if(!S.debate.completed){
+    S.debate.battles.forEach((b,i)=>{ html += renderBattleCard(b,i,myName); });
+  }
   root.innerHTML = html;
   startDbTicker();
 }
-function renderBattleCard(b,i){
+function renderBattleCard(b,i,myName){
   let inner = `<div class="battle-card"><div class="battle-vs">${escapeHtml(b.teamA)} 🆚 ${escapeHtml(b.teamB)}</div>
     <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Topic: <b>${escapeHtml(b.topic||'TBD')}</b></div>`;
   if(b.link) inner += `<a href="${escapeHtml(b.link)}" target="_blank" class="btn btn-primary btn-sm" style="margin-bottom:10px;display:inline-flex"><i class="fa-solid fa-video"></i> Join Meeting Room</a>`;
   if(b.status==='setup'){
     inner += `<div style="font-size:12px;color:var(--text3)">Waiting for admin to start this battle...</div>`;
-  } else if(b.speakers){
-    inner += `<div>` + b.speakers.map((s,si)=>{
-      const cls = si===b.currentIndex && b.status==='live' ? 'current' : (si<b.currentIndex? 'done':'');
-      return `<div class="speaker-row ${cls}"><span class="slot-num">${s.slot}</span> <span>${escapeHtml(s.name)}</span> <span style="color:var(--text3);font-size:11px">(${escapeHtml(s.team)})</span> ${si===b.currentIndex && b.status==='live'?`<span id="dbTimer_${i}" style="margin-left:auto;font-weight:800;color:#c0392b"></span>`:''}</div>`;
-    }).join('') + `</div>`;
+  } else {
+    inner += renderSpeakersHtml(b,i,'p',myName);
     if(b.status==='ended') inner += `<div style="margin-top:8px;font-size:12px;color:#1a9e5c;font-weight:700">Battle finished 🎉</div>`;
   }
   inner += `</div>`;
   return inner;
+}
+// idPrefix: 'a' for admin view, 'p' for participant view (keeps DOM ids unique between the two)
+function renderSpeakersHtml(b,i,idPrefix,myName){
+  if(!b.speakers) return '';
+  return `<div>` + b.speakers.map((s,si)=>{
+    const isCurrent = si===b.currentIndex && b.status==='live';
+    const cls = isCurrent ? 'current' : (si<b.currentIndex? 'done':'');
+    const isMe = myName && s.name.trim().toLowerCase()===myName.trim().toLowerCase();
+    const skipBtn = (isCurrent && isMe) ? `<button class="claim-btn" onclick="dbSkipTurn(${i})">Skip My Turn</button>` : '';
+    return `<div class="speaker-row ${cls}"><span class="slot-num">${s.slot}</span> <span>${escapeHtml(s.name)}</span> <span style="color:var(--text3);font-size:11px">(${escapeHtml(s.team)})</span> ${isCurrent?`<span id="dbTimer_${idPrefix}_${i}" style="margin-left:auto;font-weight:800;color:#c0392b"></span>${skipBtn}`:''}</div>`;
+  }).join('') + `</div>`;
 }
 function startDbTicker(){
   clearInterval(S.dbTickInt);
@@ -1986,8 +2236,11 @@ function startDbTicker(){
       if(b.status==='live' && b.turnStartedAt){
         const dur=S.debate.turnDurationSec||90;
         const remain = Math.max(0, Math.round(dur-(Date.now()-b.turnStartedAt)/1000));
-        const el = document.getElementById('dbTimer_'+i);
-        if(el) el.textContent = `${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;
+        const label = `${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;
+        ['a','p'].forEach(pfx=>{
+          const el = document.getElementById(`dbTimer_${pfx}_${i}`);
+          if(el) el.textContent = label;
+        });
       }
     });
     if(S.debate && S.debate.activeBattle!=null && S.debate.battles[S.debate.activeBattle]){
@@ -3145,6 +3398,7 @@ window.markComplete = function(chId){
   renderChaptersList();
   updateTrackProgress();
   renderBadges();
+  pushLearnProgress();
   const btn = document.querySelector('.complete-btn');
   if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-check"></i> Completed!';}
   toast('Chapter complete! 🎉','success');
@@ -3185,10 +3439,65 @@ function renderBadges(){
   }).join('');
 }
 
+/* ---------------- LEARNER IDENTITY + FIREBASE SYNC ---------------- */
+function learnerKey(name){ return name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_'); }
+function renderLearnerIdBar(){
+  const el = document.getElementById('learnerIdBar');
+  if(!el) return;
+  const name = localStorage.getItem('wc_learnerName');
+  if(!name){
+    el.innerHTML = `<i class="fa-solid fa-user" style="color:var(--text3)"></i>
+      <input type="text" id="learnerNameInput" placeholder="Enter your name to save progress & badges"/>
+      <button class="btn btn-primary btn-sm" onclick="setLearnerName()">Save</button>`;
+  } else {
+    el.innerHTML = `<i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> Learning as <b>${escapeHtml(name)}</b>
+      <button class="lid-change" onclick="changeLearnerName()">change</button>`;
+  }
+}
+window.setLearnerName = function(){
+  const v = document.getElementById('learnerNameInput').value.trim();
+  if(!v){toast('Enter your name first','error');return;}
+  localStorage.setItem('wc_learnerName', v);
+  renderLearnerIdBar();
+  pushLearnProgress();
+  toast('Saved! Your progress will now sync.','success');
+}
+window.changeLearnerName = function(){
+  localStorage.removeItem('wc_learnerName');
+  renderLearnerIdBar();
+}
+function pushLearnProgress(){
+  const name = localStorage.getItem('wc_learnerName');
+  if(!name) return;
+  const prog = getLMSProgress();
+  const totalChapters = Object.values(TRACKS).reduce((s,t)=>s+t.chapters.length,0);
+  const completedCount = Object.keys(prog).filter(k=>prog[k]).length;
+  const earned = ALL_BADGES.filter(b=>b.condition(prog)).map(b=>({id:b.id,label:b.label,icon:b.icon}));
+  set(ref(db,'learnProgress/'+learnerKey(name)),{name,completedCount,totalChapters,badges:earned,updatedAt:Date.now()});
+}
+function renderAdminLearnList(){
+  const el = document.getElementById('adminLearnList');
+  if(!el) return;
+  const entries = Object.values(S.learnProgress||{});
+  if(!entries.length){el.innerHTML='<div style="color:var(--text3);font-size:12px">No one has started learning yet</div>';return;}
+  entries.sort((a,b)=>(b.completedCount||0)-(a.completedCount||0));
+  el.innerHTML = entries.map(e=>`<div class="admin-learn-row">
+      <span>${escapeHtml(e.name)}</span>
+      <span>${e.completedCount}/${e.totalChapters} chapters ${e.badges&&e.badges.length? '· '+e.badges.map(b=>b.icon).join(' '):''}</span>
+    </div>`).join('');
+}
+onValue(ref(db,'learnProgress'), snap=>{
+  S.learnProgress = snap.val()||{};
+  renderAdminLearnList();
+  renderMemberGrid();
+});
+
 // Init learn page
 window.initLearn = function(){
   switchTrack('html');
   renderBadges();
+  renderLearnerIdBar();
+  pushLearnProgress();
 }
 
 </script>

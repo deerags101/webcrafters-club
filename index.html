@@ -8,6 +8,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#1a2d6b" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#0e1424" media="(prefers-color-scheme: dark)"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="WebCrafters"/>
+<script>
+  // Apply saved theme ASAP (before paint) to avoid a flash.
+  (function(){ try{ var t=localStorage.getItem('wc_theme'); if(!t) t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; if(t==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){} })();
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -19,6 +30,55 @@
   --card:#ffffff;
   --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
 }
+/* ===== DARK MODE ===== */
+:root[data-theme="dark"]{
+  --bg:#0e1424;--bg2:#161d31;--bg3:#1c2540;--bg4:#243056;--bg5:#2c3a66;
+  --accent:#6d8bff;--accent2:#f5b843;--accent3:#ff6b6b;--gold:#f5b843;--silver:#9aa0b8;--bronze:#cd7f32;
+  --green:#25c07a;--amber:#f5b843;--pink:#ff6b6b;--cyan:#6d8bff;
+  --text:#e8ecf7;--text2:#aab3cc;--text3:#7581a0;
+  --border:rgba(255,255,255,0.12);--border2:rgba(245,184,67,0.40);
+  --card:#161d31;
+}
+:root[data-theme="dark"] body{background:var(--bg);color:var(--text)}
+:root[data-theme="dark"] nav{background:rgba(14,20,36,0.85)}
+:root[data-theme="dark"] .stat-box,
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .rank-table,
+:root[data-theme="dark"] .cert-card,
+:root[data-theme="dark"] .an-tile,
+:root[data-theme="dark"] .an-card,
+:root[data-theme="dark"] .ev-card,
+:root[data-theme="dark"] .modal{background:var(--card);border-color:var(--border)}
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .admin-drawer{background:var(--card);border-color:var(--border)}
+:root[data-theme="dark"] .a-input,
+:root[data-theme="dark"] .award-sel,
+:root[data-theme="dark"] .pin-input,
+:root[data-theme="dark"] textarea.a-input{background:var(--bg3);color:var(--text);border-color:var(--border)}
+:root[data-theme="dark"] .nav-link:hover,
+:root[data-theme="dark"] .nav-link.active{background:rgba(109,139,255,0.14)}
+:root[data-theme="dark"] .an-overlay{background:var(--bg)}
+:root[data-theme="dark"] .qz-join,
+:root[data-theme="dark"] .qz-wait{background:var(--card)}
+.nav-icon-btn{background:transparent;border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.nav-icon-btn:hover{color:var(--accent);border-color:var(--accent)}
+#installBtn{display:none}
+/* ===== GLOBAL SEARCH ===== */
+.search-overlay{position:fixed;inset:0;background:rgba(14,20,36,0.55);z-index:2400;display:none;justify-content:center;align-items:flex-start;padding:80px 20px}
+.search-overlay.open{display:flex}
+.search-box{background:var(--card,#fff);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;box-shadow:0 24px 70px rgba(22,32,74,0.3);overflow:hidden;max-height:75vh;display:flex;flex-direction:column}
+.search-inp-wrap{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.search-inp-wrap i{color:var(--text3)}
+#searchInput{flex:1;border:none;background:none;outline:none;font-size:16px;color:var(--text);font-family:var(--font-body)}
+.search-results{overflow-y:auto;padding:8px}
+.sr-group{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:10px 12px 4px}
+.sr-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer}
+.sr-item:hover{background:var(--bg2)}
+.sr-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;color:#fff}
+.sr-main{flex:1;min-width:0}
+.sr-title{font-weight:700;color:var(--text);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr-sub{font-size:12px;color:var(--text3)}
+.sr-empty{text-align:center;color:var(--text3);padding:30px;font-size:13px}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
@@ -50,7 +110,115 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .nav-admin-btn{margin-left:8px;background:var(--accent);border:1px solid var(--accent);color:#fff;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;display:flex;align-items:center;gap:6px}
 .nav-admin-btn:hover{background:#142253}
 .nav-admin-btn.unlocked{color:#fff;border-color:var(--green);background:var(--green)}
+.nav-auth-btn{margin-left:8px;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;display:flex;align-items:center;gap:6px;max-width:180px}
+.nav-auth-btn:hover{background:rgba(26,45,107,0.06)}
+.nav-auth-btn.logged-in{border-color:var(--green);color:var(--green)}
+.nav-auth-btn.logged-in #authNavLabel{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hamburger{display:none;background:none;border:none;color:var(--accent);cursor:pointer;font-size:20px;margin-left:auto}
+/* ===== AUTH MODAL ===== */
+.auth-overlay{position:fixed;inset:0;background:rgba(22,32,74,0.55);z-index:2100;display:none;align-items:center;justify-content:center;padding:24px}
+.auth-overlay.open{display:flex}
+.auth-card{background:rgba(255,255,255,0.98);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;padding:26px;box-shadow:0 20px 60px rgba(22,32,74,0.22)}
+.auth-title{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--accent);display:flex;align-items:center;gap:8px}
+.auth-sub{font-size:12px;color:var(--text3);margin:6px 0 18px}
+.auth-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px;display:block}
+.auth-err{font-size:12px;color:var(--accent3);background:rgba(212,43,43,0.08);border:1px solid rgba(212,43,43,0.25);border-radius:8px;padding:8px 10px;margin:10px 0;display:none}
+.auth-switch{font-size:12px;color:var(--text2);text-align:center;margin-top:16px}
+.auth-switch a{color:var(--accent);font-weight:700;cursor:pointer;text-decoration:none}
+.auth-link{color:var(--accent);font-size:11px;cursor:pointer;text-decoration:none}
+.auth-profile{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
+.auth-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-display);flex-shrink:0}
+/* ===== EVENTS ===== */
+.ev-wrap{max-width:1000px;margin:0 auto;padding:24px 2rem 60px}
+.ev-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.ev-title{font-family:var(--font-display);font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--accent)}
+.ev-title span{color:var(--accent2)}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.ev-card{background:var(--card,#fff);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
+.ev-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(22,32,74,0.14)}
+.ev-banner{height:130px;background:linear-gradient(135deg,var(--accent),var(--accent2));background-size:cover;background-position:center;position:relative;flex-shrink:0}
+.ev-type-chip{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-radius:20px}
+.ev-status{position:absolute;top:10px;right:10px;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px}
+.ev-status.open{background:var(--green);color:#fff}
+.ev-status.closed{background:#8894a8;color:#fff}
+.ev-status.full{background:var(--gold,#f5a623);color:#3a2a00}
+.ev-cbody{padding:14px 16px}
+.ev-cname{font-weight:800;font-size:16px;color:var(--text);margin-bottom:4px}
+.ev-meta{font-size:12px;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.ev-meta i{color:var(--accent2);margin-right:3px}
+.ev-empty{text-align:center;color:var(--text3);padding:50px 0;font-size:14px}
+/* detail */
+.ev-detail-banner{height:200px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));background-size:cover;background-position:center;margin-bottom:18px}
+.ev-back{background:none;border:none;color:var(--accent);font-weight:700;cursor:pointer;font-size:13px;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+.ev-d-title{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.ev-d-metarow{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--text2);margin-bottom:18px}
+.ev-d-metarow i{color:var(--accent2);margin-right:4px}
+.ev-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px}
+.ev-box h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:8px}
+.ev-box p{font-size:14px;color:var(--text);line-height:1.6;white-space:pre-wrap}
+.ev-locked{background:repeating-linear-gradient(45deg,var(--bg2),var(--bg2) 10px,rgba(26,45,107,0.04) 10px,rgba(26,45,107,0.04) 20px);border:1px dashed var(--border2,#c9d0e0);border-radius:14px;padding:22px;text-align:center;color:var(--text3);font-size:14px;margin-bottom:16px}
+.ev-ticket{background:linear-gradient(135deg,#1a9e5c,#12b981);color:#fff;border-radius:14px;padding:16px;margin-bottom:16px}
+.ev-ticket .tk-id{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:1px}
+.ev-ticket .tk-badge{display:inline-block;background:rgba(255,255,255,0.25);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:6px}
+.reg-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--bg2)}
+.reg-row .rr-wait{color:var(--gold,#b9780f);font-weight:700}
+.reg-row .rr-ok{color:#1a9e5c;font-weight:700}
+.award-sel{font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:var(--font-body)}
+/* ===== CERTIFICATE ===== */
+.cert-overlay{position:fixed;inset:0;background:rgba(22,32,74,0.6);z-index:2200;display:none;align-items:center;justify-content:center;padding:20px}
+.cert-overlay.open{display:flex}
+.cert-card{background:#fff;border-radius:18px;max-width:820px;width:100%;max-height:92vh;overflow-y:auto;padding:20px;box-shadow:0 24px 70px rgba(22,32,74,0.3)}
+.cert-canvas-wrap{width:100%;overflow-x:auto;border-radius:10px;background:var(--bg2);padding:6px}
+#certCanvas{width:100%;height:auto;display:block;border-radius:6px}
+.cert-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cert-actions .btn{flex:1;min-width:130px}
+#resultCanvas{width:100%;max-width:380px;height:auto;display:block;border-radius:12px;margin:0 auto}
+/* ===== HOUSES ===== */
+.house-wrap{max-width:900px;margin:0 auto;padding:24px 2rem 60px}
+.house-hero{text-align:center;margin-bottom:24px}
+.house-hero .ev-title{margin-bottom:4px}
+.house-lb{display:flex;flex-direction:column;gap:14px}
+.house-card{position:relative;border-radius:16px;padding:18px 20px;overflow:hidden;color:#fff;box-shadow:0 10px 30px rgba(22,32,74,0.14)}
+.house-card .hc-top{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.hc-rank{font-family:var(--font-display);font-size:30px;font-weight:800;opacity:.85;min-width:44px}
+.hc-icon{font-size:34px}
+.hc-name{font-family:var(--font-display);font-size:22px;font-weight:800;flex:1}
+.hc-pts{font-family:var(--font-display);font-size:28px;font-weight:800}
+.hc-pts small{font-size:12px;font-weight:600;opacity:.85}
+.hc-bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.3);margin-top:12px;overflow:hidden;position:relative;z-index:1}
+.hc-bar > span{display:block;height:100%;background:rgba(255,255,255,0.9);border-radius:6px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.hc-sub{font-size:12px;opacity:.9;margin-top:8px;position:relative;z-index:1}
+.house-card.mine{outline:3px solid #fff;outline-offset:-3px}
+.house-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.hp-btn{border:2px solid transparent;border-radius:14px;padding:16px;text-align:center;cursor:pointer;color:#fff;font-weight:800;font-family:var(--font-display);transition:transform .15s}
+.hp-btn:hover{transform:translateY(-3px)}
+.hp-btn .hp-ic{font-size:30px;display:block;margin-bottom:6px}
+.house-mine-banner{border-radius:14px;padding:16px 18px;color:#fff;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.house-mine-banner .hmb-ic{font-size:32px}
+.hpts-log-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--bg2)}
+/* ===== QR + SCANNER ===== */
+#qrImg{width:240px;height:240px;display:none;margin:10px auto;background:#fff;border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(22,32,74,.12)}
+.scan-video-wrap{position:relative;width:100%;max-width:360px;margin:0 auto;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:1/1}
+#scanVideo{width:100%;height:100%;object-fit:cover;display:block}
+.scan-frame{position:absolute;inset:14%;border:3px solid #f5a623;border-radius:18px;pointer-events:none}
+.scan-status{text-align:center;font-size:13px;color:var(--text2);margin-top:12px;min-height:22px;font-weight:600}
+.scan-recent{max-height:150px;overflow-y:auto;margin-top:10px}
+/* ===== ANALYTICS DASHBOARD ===== */
+.an-overlay{position:fixed;inset:0;background:var(--bg2);z-index:2300;display:none;overflow-y:auto}
+.an-overlay.open{display:block}
+.an-panel{max-width:1000px;margin:0 auto;padding:0 2rem 60px}
+.an-topbar{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);padding:16px 0;margin-bottom:12px;border-bottom:1px solid var(--border);z-index:1;gap:10px;flex-wrap:wrap}
+.an-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--accent)}
+.an-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.an-tile{background:var(--card,#fff);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+.an-tval{font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1}
+.an-tlabel{font-size:12px;color:var(--text3);margin-top:6px}
+.an-charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.an-card{background:var(--card,#fff);border:1px solid var(--border);border-radius:16px;padding:16px;min-width:0}
+.an-ctitle{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--text);margin-bottom:12px}
+.an-ctitle span{font-weight:500;color:var(--text3);font-size:12px}
+.an-note{margin-top:18px;font-size:12px;color:var(--text3);text-align:center}
+.an-card svg{display:block;overflow:visible}
 
 /* PAGES */
 .page{display:none;padding-top:64px;position:relative;z-index:1;min-height:100vh}
@@ -652,6 +820,74 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
 .mem-badge-chip{font-size:14px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:20px;padding:2px 6px}
 .admin-learn-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
 
+/* ===== MY JOURNEY ===== */
+.jr-wrap{max-width:1000px;margin:0 auto;padding:24px 2rem 60px}
+.jr-hero{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;padding:22px 24px;color:#fff;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.jr-hero-av{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:26px;flex-shrink:0}
+.jr-hero-name{font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.1}
+.jr-hero-sub{font-size:13px;opacity:.92;margin-top:3px}
+.jr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:22px}
+.jr-stat{background:var(--card,#fff);border:1px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center}
+.jr-stat b{display:block;font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--accent)}
+.jr-stat span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.jr-section{background:var(--card,#fff);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+.jr-sec-title{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.jr-sec-title i{color:var(--accent2)}
+.jr-badges{display:flex;gap:10px;flex-wrap:wrap}
+.jr-badge{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:10px 12px;text-align:center;min-width:78px}
+.jr-badge .bi{font-size:24px;display:block;margin-bottom:3px}
+.jr-badge .bl{font-size:10px;font-weight:700;color:#b9780f}
+.jr-ev-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.jr-ev-row:last-child{border-bottom:none}
+.jr-ev-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.jr-ev-main{flex:1;min-width:0}
+.jr-ev-main b{color:var(--text);font-weight:700}
+.jr-ev-meta{font-size:11px;color:var(--text3)}
+.jr-pill{font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.jr-invite{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.jr-invite input{flex:1;min-width:180px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font-body);font-size:13px}
+.jr-progress-track{height:10px;border-radius:6px;background:var(--bg4);overflow:hidden;margin-top:6px}
+.jr-progress-track span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.jr-empty{color:var(--text3);font-size:13px;padding:10px 0}
+.jr-guest{text-align:center;padding:50px 20px;color:var(--text3)}
+:root[data-theme="dark"] .jr-stat,:root[data-theme="dark"] .jr-section{background:var(--card);border-color:var(--border)}
+
+/* ===== LIVE EVENT CALENDAR ===== */
+.cal-overlay{position:fixed;inset:0;background:rgba(14,20,36,0.55);z-index:2300;display:none;justify-content:center;align-items:flex-start;padding:60px 20px}
+.cal-overlay.open{display:flex}
+.cal-box{background:var(--card,#fff);border:1px solid var(--border);border-radius:18px;width:100%;max-width:620px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(22,32,74,0.3)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.cal-title{font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.cal-body{overflow-y:auto;padding:8px 20px 20px}
+.cal-group{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:16px 0 6px}
+.cal-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.cal-item:last-child{border-bottom:none}
+.cal-date{flex-shrink:0;width:54px;text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:6px 0}
+.cal-date .d{font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--accent);line-height:1}
+.cal-date .m{font-size:10px;text-transform:uppercase;color:var(--text3);font-weight:700;letter-spacing:.5px}
+.cal-main{flex:1;min-width:0}
+.cal-name{font-weight:800;color:var(--text);cursor:pointer}
+.cal-name:hover{color:var(--accent)}
+.cal-meta{font-size:12px;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px;margin-top:3px}
+.cal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.cal-tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
+.cal-tag.open{background:rgba(26,158,92,.15);color:var(--green)}
+.cal-tag.closed{background:rgba(136,148,168,.18);color:#8894a8}
+.cal-tag.full{background:rgba(245,166,35,.18);color:#b9780f}
+.cal-tag.mine{background:rgba(26,45,107,.12);color:var(--accent)}
+.cal-tag.soon{background:rgba(212,43,43,.14);color:var(--pink)}
+.cal-empty{text-align:center;color:var(--text3);padding:40px 0;font-size:14px}
+
+/* ===== IDLE CURSOR SPIDER ===== */
+#idleSpider{position:fixed;top:0;left:0;z-index:6000;pointer-events:none;width:40px;height:40px;transform:translate(-100px,-100px);will-change:transform;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+#idleSpider .leg{animation:idleSpiderLegs .28s ease-in-out infinite alternate;transform-origin:center}
+@keyframes idleSpiderLegs{from{transform:scaleY(1)}to{transform:scaleY(.82)}}
+.spider-poison{position:fixed;z-index:6001;pointer-events:none;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#7CFC00,#1a9e5c);box-shadow:0 0 10px 3px rgba(124,252,0,.7);transform:translate(-50%,-50%)}
+@keyframes poisonWobble{0%,100%{transform:translate(-50%,-50%) rotate(0)}20%{transform:translate(-52%,-48%) rotate(-14deg)}40%{transform:translate(-48%,-52%) rotate(12deg)}60%{transform:translate(-51%,-49%) rotate(-8deg)}80%{transform:translate(-49%,-51%) rotate(6deg)}}
+.poison-cursor{cursor:none}
+.spider-particle{position:fixed;z-index:6001;pointer-events:none;width:6px;height:6px;border-radius:50%;background:#7CFC00;box-shadow:0 0 6px 1px rgba(124,252,0,.8)}
+@media (prefers-reduced-motion: reduce){#idleSpider,.spider-poison,.spider-particle{display:none!important}}
+
 </style>
 
 </head>
@@ -666,13 +902,22 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
   </a>
   <div class="nav-links" id="navLinks">
     <button class="nav-link active" onclick="showPage('home')">Home</button>
+    <button class="nav-link" onclick="showPage('journey')">My Journey</button>
     <button class="nav-link" onclick="showPage('leaderboard')">Leaderboard</button>
     <button class="nav-link" onclick="showPage('creative')">CreativeCorner</button>
     <button class="nav-link" onclick="showPage('activities')">Activities</button>
+    <button class="nav-link" onclick="showPage('events')">Events</button>
+    <button class="nav-link" onclick="showPage('houses')">Houses</button>
     <button class="nav-link" onclick="showPage('roadmap')">Roadmap</button>
     <button class="nav-link" onclick="showPage('learn')">Learn</button>
     <button class="nav-link" onclick="showPage('members')">Members</button>
   </div>
+  <button class="nav-icon-btn" id="searchBtn" onclick="openSearch()" title="Search (Ctrl/⌘+K)"><i class="fa-solid fa-magnifying-glass"></i></button>
+  <button class="nav-icon-btn" id="installBtn" onclick="installApp()" title="Install app"><i class="fa-solid fa-download"></i></button>
+  <button class="nav-icon-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+  <button class="nav-auth-btn" id="authNavBtn" onclick="handleAuthNav()">
+    <i class="fa-solid fa-right-to-bracket" id="authNavIcon"></i> <span id="authNavLabel">Login</span>
+  </button>
   <button class="nav-admin-btn" id="adminNavBtn" onclick="toggleAdmin()">
     <i class="fa-solid fa-lock" id="adminLockIcon"></i> Admin
   </button>
@@ -1013,6 +1258,161 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
   </div>
 </div>
 
+<!-- ===================== EVENTS PAGE ===================== -->
+<div class="page" id="page-events">
+  <div class="ev-wrap">
+    <div id="eventsListView">
+      <div class="ev-head">
+        <div>
+          <div class="ev-title">Club <span>Events</span></div>
+          <div style="font-size:14px;color:var(--text2);margin-top:4px">Register, get your ticket, and unlock event details.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openCalendar()"><i class="fa-regular fa-calendar-days"></i> Calendar view</button>
+      </div>
+      <div class="ev-grid" id="eventsGrid">
+        <div class="loading"><div class="spinner"></div> Loading events...</div>
+      </div>
+    </div>
+    <div id="eventDetailView" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ===================== MY JOURNEY PAGE ===================== -->
+<div class="page" id="page-journey">
+  <div class="jr-wrap">
+    <div class="ev-head">
+      <div>
+        <div class="ev-title">My <span>Journey</span></div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px">Everything about you in one place — events, house, badges, rank and learning.</div>
+      </div>
+    </div>
+    <div id="journeyBody">
+      <div class="loading"><div class="spinner"></div> Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LIVE EVENT CALENDAR OVERLAY ===================== -->
+<div class="cal-overlay" id="calendarOverlay" onclick="if(event.target===this)closeCalendar()">
+  <div class="cal-box">
+    <div class="cal-head">
+      <div class="cal-title"><i class="fa-regular fa-calendar-days"></i> Event Calendar</div>
+      <button class="modal-close" onclick="closeCalendar()">×</button>
+    </div>
+    <div class="cal-body" id="calendarBody"></div>
+  </div>
+</div>
+
+<!-- EVENT REGISTRATION MODAL -->
+<div class="auth-overlay" id="regOverlay" onclick="if(event.target===this)closeRegModal()">
+  <div class="auth-card">
+    <div class="admin-head" style="border:none;margin-bottom:6px;padding:0">
+      <div class="auth-title"><i class="fa-solid fa-ticket"></i> Register</div>
+      <button class="modal-close" onclick="closeRegModal()">×</button>
+    </div>
+    <div class="auth-sub" id="regEventName">—</div>
+    <div id="regModalBody"></div>
+  </div>
+</div>
+
+<!-- ===================== HOUSES PAGE ===================== -->
+<div class="page" id="page-houses">
+  <div class="house-wrap">
+    <div class="house-hero">
+      <div class="ev-title">House <span>War</span> 🏆</div>
+      <div style="font-size:14px;color:var(--text2)">Earn points for your house through every activity. Live leaderboard below.</div>
+    </div>
+    <div id="houseMineArea"></div>
+    <div class="house-lb" id="houseLeaderboard">
+      <div class="loading"><div class="spinner"></div> Loading houses...</div>
+    </div>
+    <div id="houseJoinArea"></div>
+  </div>
+</div>
+
+<!-- RESULT CARD MODAL -->
+<div class="cert-overlay" id="resultOverlay" onclick="if(event.target===this)closeResult()">
+  <div class="cert-card" style="max-width:460px">
+    <div class="admin-head" style="border:none;margin-bottom:12px;padding:0">
+      <div class="auth-title"><i class="fa-solid fa-trophy"></i> Result Card</div>
+      <button class="modal-close" onclick="closeResult()">×</button>
+    </div>
+    <div class="cert-canvas-wrap" style="background:transparent"><canvas id="resultCanvas" width="1080" height="1080"></canvas></div>
+    <div class="cert-actions">
+      <button class="btn btn-primary" onclick="downloadResult()"><i class="fa-solid fa-download"></i> Download</button>
+      <button class="btn" onclick="shareResult()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL SEARCH -->
+<div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <div class="search-inp-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="searchInput" placeholder="Search events, houses, members…" oninput="runSearch(this.value)" autocomplete="off"/>
+      <button class="modal-close" onclick="closeSearch()" style="font-size:22px">×</button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- ANALYTICS DASHBOARD (admin, full screen) -->
+<div class="an-overlay" id="analyticsOverlay">
+  <div class="an-panel">
+    <div class="an-topbar">
+      <div class="an-title"><i class="fa-solid fa-chart-line"></i> Analytics Dashboard</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="openAnalytics()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        <button class="btn btn-primary btn-sm" onclick="closeAnalytics()">Close ×</button>
+      </div>
+    </div>
+    <div id="analyticsBody"></div>
+  </div>
+</div>
+
+<!-- QR TICKET MODAL (member) -->
+<div class="cert-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()">
+  <div class="cert-card" style="max-width:340px;text-align:center">
+    <div class="admin-head" style="border:none;margin-bottom:8px;padding:0">
+      <div class="auth-title"><i class="fa-solid fa-qrcode"></i> Check-in QR</div>
+      <button class="modal-close" onclick="closeQR()">×</button>
+    </div>
+    <div id="qrStatus" style="font-size:12px;color:var(--text3)">Generating…</div>
+    <img id="qrImg" alt="Check-in QR code"/>
+    <div id="qrInfo"></div>
+  </div>
+</div>
+
+<!-- QR SCANNER MODAL (admin) -->
+<div class="cert-overlay" id="scanOverlay" onclick="if(event.target===this)closeScanner()">
+  <div class="cert-card" style="max-width:420px">
+    <div class="admin-head" style="border:none;margin-bottom:12px;padding:0">
+      <div class="auth-title"><i class="fa-solid fa-camera"></i> Scan Check-in</div>
+      <button class="modal-close" onclick="closeScanner()">×</button>
+    </div>
+    <div class="scan-video-wrap"><video id="scanVideo" playsinline muted></video><div class="scan-frame"></div></div>
+    <div class="scan-status" id="scanStatus"></div>
+    <div class="scan-recent" id="scanRecent"></div>
+  </div>
+</div>
+
+<!-- CERTIFICATE MODAL -->
+<div class="cert-overlay" id="certOverlay" onclick="if(event.target===this)closeCert()">
+  <div class="cert-card">
+    <div class="admin-head" style="border:none;margin-bottom:12px;padding:0">
+      <div class="auth-title"><i class="fa-solid fa-award"></i> Certificate</div>
+      <button class="modal-close" onclick="closeCert()">×</button>
+    </div>
+    <div class="cert-canvas-wrap"><canvas id="certCanvas" width="1200" height="849"></canvas></div>
+    <div class="cert-actions">
+      <button class="btn btn-primary" onclick="downloadCert()"><i class="fa-solid fa-download"></i> Download PNG</button>
+      <button class="btn" onclick="shareCert()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      <button class="btn btn-ghost" onclick="printCert()"><i class="fa-solid fa-print"></i> Print / PDF</button>
+    </div>
+  </div>
+</div>
+
 <!-- FREEZE OVERLAY (Quiz anti-cheat) -->
 <div class="freeze-overlay" id="freezeOverlay">
   <i class="fa-solid fa-triangle-exclamation"></i>
@@ -1022,6 +1422,104 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
 </div>
 
 <!-- ===================== ADMIN OVERLAY ===================== -->
+<!-- ===================== AUTH MODAL ===================== -->
+<div class="auth-overlay" id="authOverlay" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-card">
+
+    <!-- ===== LOGIN ===== -->
+    <div id="authLoginView">
+      <div class="admin-head" style="border:none;margin-bottom:6px;padding:0">
+        <div class="auth-title"><i class="fa-solid fa-right-to-bracket"></i> Login</div>
+        <button class="modal-close" onclick="closeAuth()">×</button>
+      </div>
+      <div class="auth-sub">Sign in to pick up your identity across quiz, debate, learn, and events.</div>
+      <label class="auth-label">Email</label>
+      <input class="a-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+      <label class="auth-label">Password</label>
+      <input class="a-input" type="password" id="loginPass" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <div style="text-align:right;margin:-2px 0 8px"><a class="auth-link" onclick="doPasswordReset()">Forgot password?</a></div>
+      <div class="auth-err" id="loginErr"></div>
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin()">Login</button>
+      <div class="auth-switch">New here? <a onclick="showAuthView('signup')">Create an account</a></div>
+    </div>
+
+    <!-- ===== SIGNUP ===== -->
+    <div id="authSignupView" style="display:none">
+      <div class="admin-head" style="border:none;margin-bottom:6px;padding:0">
+        <div class="auth-title"><i class="fa-solid fa-user-plus"></i> Create Account</div>
+        <button class="modal-close" onclick="closeAuth()">×</button>
+      </div>
+      <div class="auth-sub">Create your account once — it's used across quiz, debate, learn, and events.</div>
+      <label class="auth-label">Full Name</label>
+      <input class="a-input" type="text" id="suName" placeholder="Your full name" autocomplete="name"/>
+      <div class="a-row2">
+        <div>
+          <label class="auth-label">Class / Grade</label>
+          <input class="a-input" type="text" id="suClass" placeholder="e.g. 10-B"/>
+        </div>
+        <div>
+          <label class="auth-label">Phone</label>
+          <input class="a-input" type="tel" id="suPhone" placeholder="Optional" autocomplete="tel"/>
+        </div>
+      </div>
+      <label class="auth-label">Email</label>
+      <input class="a-input" type="email" id="suEmail" placeholder="you@example.com" autocomplete="email"/>
+      <label class="auth-label">Password</label>
+      <input class="a-input" type="password" id="suPass" placeholder="At least 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"/>
+      <div class="auth-err" id="signupErr"></div>
+      <button class="btn btn-primary btn-full" id="signupBtn" onclick="doSignup()">Create Account</button>
+      <div class="auth-switch">Already have an account? <a onclick="showAuthView('login')">Login</a></div>
+    </div>
+
+    <!-- ===== VERIFY EMAIL (OTP) ===== -->
+    <div id="authVerifyView" style="display:none">
+      <div class="admin-head" style="border:none;margin-bottom:6px;padding:0">
+        <div class="auth-title"><i class="fa-solid fa-envelope-circle-check"></i> Verify Email</div>
+        <button class="modal-close" onclick="closeAuth()">×</button>
+      </div>
+      <div class="auth-sub">We've sent a 6-digit code to <b id="otpEmailLabel">your email</b>. Enter it below (check your inbox/spam).</div>
+      <input class="a-input" type="text" id="otpInput" inputmode="numeric" maxlength="6" placeholder="6-digit code" style="text-align:center;font-size:22px;letter-spacing:8px;font-family:var(--font-display)" onkeydown="if(event.key==='Enter')doVerifyOtp()"/>
+      <div class="auth-err" id="verifyErr"></div>
+      <button class="btn btn-primary btn-full" id="verifyBtn" onclick="doVerifyOtp()">Verify</button>
+      <div class="auth-switch">Didn't get the code? <a id="resendLink" onclick="resendOtp()">Resend code</a></div>
+      <div class="auth-switch" style="margin-top:6px"><a onclick="doLogout()">Cancel / Logout</a></div>
+    </div>
+
+    <!-- ===== PROFILE (logged in) ===== -->
+    <div id="authProfileView" style="display:none">
+      <div class="admin-head" style="border:none;margin-bottom:6px;padding:0">
+        <div class="auth-title"><i class="fa-solid fa-id-badge"></i> My Profile</div>
+        <button class="modal-close" onclick="closeAuth()">×</button>
+      </div>
+      <div class="auth-profile">
+        <div class="auth-avatar" id="profAvatar">?</div>
+        <div style="min-width:0">
+          <div style="font-weight:800;font-size:16px;color:var(--text);overflow:hidden;text-overflow:ellipsis" id="profName">—</div>
+          <div style="font-size:12px;color:var(--text3)" id="profMeta">—</div>
+        </div>
+      </div>
+      <div id="profVerifyRow"></div>
+      <label class="auth-label">Full Name</label>
+      <input class="a-input" type="text" id="profNameInput" placeholder="Your full name"/>
+      <div class="a-row2">
+        <div>
+          <label class="auth-label">Class / Grade</label>
+          <input class="a-input" type="text" id="profClassInput" placeholder="e.g. 10-B"/>
+        </div>
+        <div>
+          <label class="auth-label">Phone</label>
+          <input class="a-input" type="tel" id="profPhoneInput" placeholder="Optional"/>
+        </div>
+      </div>
+      <div class="auth-err" id="profErr"></div>
+      <button class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
+      <button class="btn btn-outline btn-full" id="notifBtn" style="margin-top:8px" onclick="requestNotifPerm()"><i class="fa-solid fa-bell"></i> Enable notifications</button>
+      <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+
+  </div>
+</div>
+
 <div class="admin-overlay" id="adminOverlay" onclick="overlayClick(event)">
   <div class="admin-drawer" id="adminDrawer">
     <!-- LOGIN STATE -->
@@ -1048,6 +1546,12 @@ body.spy-shake-shot{animation:spyShakeShot .28s ease}
           <button class="btn btn-ghost btn-sm" onclick="adminLogout()"><i class="fa-solid fa-lock"></i></button>
           <button class="modal-close" onclick="toggleAdmin()">×</button>
         </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="a-section">
+        <div class="a-label"><i class="fa-solid fa-chart-line"></i> Analytics</div>
+        <button class="btn btn-primary btn-sm btn-full" onclick="openAnalytics()"><i class="fa-solid fa-chart-line"></i> Open Analytics Dashboard</button>
       </div>
 
       <!-- MEMBERS -->
@@ -1162,6 +1666,67 @@ A"></textarea>
       <div class="a-section">
         <div class="a-label"><i class="fa-solid fa-graduation-cap"></i> Learning Progress</div>
         <div style="max-height:220px;overflow-y:auto" id="adminLearnList"></div>
+      </div>
+
+      <!-- EVENTS ADMIN -->
+      <div class="a-section">
+        <div class="a-label"><i class="fa-solid fa-calendar-star"></i> Events — Create New</div>
+        <input class="a-input" id="evTitle" placeholder="Event title (e.g. Poster Making Contest)"/>
+        <input class="a-input" id="evType" placeholder="Type (e.g. Poster Making, Coding Contest, Workshop)"/>
+        <span class="field-label">Banner image — paste a URL OR upload</span>
+        <input class="a-input" id="evBannerUrl" placeholder="https://image-url.jpg (optional)"/>
+        <input class="a-input" id="evBannerFile" type="file" accept="image/*" onchange="evBannerPick(event)"/>
+        <div id="evBannerPreview" style="font-size:11px;color:var(--text3);margin-bottom:8px"></div>
+        <textarea class="a-input" id="evDesc" rows="3" placeholder="Description — what is this event about?"></textarea>
+        <textarea class="a-input" id="evRules" rows="3" placeholder="Rules (one per line)"></textarea>
+        <span class="field-label">Date &amp; time of event</span>
+        <input class="a-input" id="evDateTime" type="datetime-local"/>
+        <div class="a-row2">
+          <select class="a-input" id="evMode">
+            <option value="offline">Offline (venue)</option>
+            <option value="online">Online (link)</option>
+          </select>
+          <input class="a-input" id="evTeamSize" type="number" min="1" value="1" placeholder="Team size (1 = solo)"/>
+        </div>
+        <input class="a-input" id="evVenue" placeholder="Venue / address (offline)"/>
+        <input class="a-input" id="evLink" placeholder="Meeting link (online)"/>
+        <div class="a-row2">
+          <input class="a-input" id="evMax" type="number" min="0" value="0" placeholder="Max participants (0 = unlimited)"/>
+          <input class="a-input" id="evDeadline" type="datetime-local"/>
+        </div>
+        <span class="field-label" style="margin-top:-4px">↑ Left: max participants · Right: registration deadline</span>
+        <div class="a-row2">
+          <button class="btn btn-primary btn-sm" id="evSaveBtn" onclick="adminSaveEvent()"><i class="fa-solid fa-floppy-disk"></i> Create Event</button>
+          <button class="btn btn-sm" onclick="adminResetEventForm()"><i class="fa-solid fa-rotate-left"></i> Clear Form</button>
+        </div>
+        <div style="margin-top:16px" class="a-label"><i class="fa-solid fa-list"></i> All Events &amp; Registrations</div>
+        <button class="btn btn-primary btn-sm btn-full" style="margin-bottom:10px" onclick="openScanner()"><i class="fa-solid fa-qrcode"></i> Scan Check-in (camera)</button>
+        <div id="adminEventsList" style="max-height:320px;overflow-y:auto"></div>
+      </div>
+
+      <!-- HOUSES ADMIN -->
+      <div class="a-section">
+        <div class="a-label"><i class="fa-solid fa-shield-halved"></i> Houses / Squads</div>
+        <div id="adminHousesList"></div>
+        <div class="a-row2" style="margin-top:8px">
+          <input class="a-input" id="hNewName" placeholder="New house name"/>
+          <input class="a-input" id="hNewIcon" placeholder="Emoji (e.g. 🦅)" maxlength="4"/>
+        </div>
+        <div class="a-row2">
+          <input class="a-input" id="hNewColor" type="color" value="#1a2d6b" style="height:38px;padding:3px"/>
+          <button class="btn btn-primary btn-sm" onclick="adminAddHouse()"><i class="fa-solid fa-plus"></i> Add House</button>
+        </div>
+        <button class="btn btn-sm btn-full" style="margin-top:6px" onclick="adminSeedHouses()"><i class="fa-solid fa-wand-magic-sparkles"></i> Seed 4 default houses</button>
+
+        <div style="margin-top:16px" class="a-label"><i class="fa-solid fa-plus-minus"></i> Award House Points</div>
+        <select class="a-input" id="hpHouse"></select>
+        <div class="a-row2">
+          <input class="a-input" id="hpPoints" type="number" placeholder="Points (e.g. 50)"/>
+          <input class="a-input" id="hpReason" placeholder="Reason (e.g. Quiz winner)"/>
+        </div>
+        <button class="btn btn-green btn-sm btn-full" onclick="adminAwardHousePoints()"><i class="fa-solid fa-trophy"></i> Give Points</button>
+        <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--text2)">Recent points</div>
+        <div id="adminHousePointsLog" style="max-height:180px;overflow-y:auto;margin-top:6px"></div>
       </div>
     </div>
   </div>
@@ -1278,7 +1843,8 @@ A"></textarea>
 <!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 // ==================== FIREBASE CONFIG ====================
 // REPLACE THIS WITH YOUR FIREBASE CONFIG
@@ -1295,7 +1861,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 window._db = db;
+window._auth = auth;
 window._fbRef = ref;
 window._fbPush = push;
 window._fbUpdate = update;
@@ -1308,6 +1876,8 @@ window._state = {
   ccItems: [],
   announcement: null,
   isAdmin: false,
+  user: null,        // global logged-in identity: {uid,email,name,class,phone}
+  authReady: false,  // becomes true after Firebase reports first auth state
   selectedDur: 15,
   uploadFileData: null,
   quizAnswers: [],
@@ -1316,6 +1886,29 @@ window._state = {
 const S = window._state;
 
 const ADMIN_PASS = "WebCrafters@2024"; // CHANGE THIS
+
+// ==================== EMAILJS (for 6-digit email OTP) ====================
+// Create a free EmailJS account -> paste these 3 values here.
+// Dashboard: https://dashboard.emailjs.com/  (Account -> Public Key, Email Services -> Service ID, Email Templates -> Template ID)
+const EMAILJS_PUBLIC_KEY  = "PASTE_YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID  = "PASTE_YOUR_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "PASTE_YOUR_TEMPLATE_ID";
+const OTP_TTL_MIN = 10;   // how long the code stays valid (minutes)
+// Use these variables in the template: {{passcode}}, {{email}}, {{time}}  (To Email field = {{email}})
+// EmailJS SDK is loaded on-demand so a CDN hiccup never breaks the rest of the site.
+let _emailjs = null;
+async function getEmailJS(){
+  if(_emailjs) return _emailjs;
+  const mod = await import('https://cdn.jsdelivr.net/npm/@emailjs/browser@4/+esm');
+  _emailjs = mod.default || mod;
+  _emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  return _emailjs;
+}
+function emailjsConfigured(){
+  return EMAILJS_PUBLIC_KEY && !EMAILJS_PUBLIC_KEY.startsWith('PASTE_')
+      && EMAILJS_SERVICE_ID && !EMAILJS_SERVICE_ID.startsWith('PASTE_')
+      && EMAILJS_TEMPLATE_ID && !EMAILJS_TEMPLATE_ID.startsWith('PASTE_');
+}
 
 // ---- CREATIVE CORNER PERSISTENCE (Firebase + local fallback) ----
 // Uploads are saved locally so every creation persists and shows up, even if
@@ -1392,13 +1985,18 @@ window.showPage = function(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  const idx = ['home','leaderboard','creative','roadmap','learn','members'].indexOf(id);
+  const idx = ['home','journey','leaderboard','creative','activities','events','houses','roadmap','learn','members'].indexOf(id);
   document.querySelectorAll('.nav-link')[idx]?.classList.add('active');
   document.getElementById('navLinks').classList.remove('open');
   window.scrollTo(0,0);
   if(id==='roadmap') initQuiz();
   if(id==='learn') initLearn();
+  if(id==='events') routeEvents();
+  if(id==='houses') renderHouses();
+  if(id==='journey' && typeof renderJourney==='function') renderJourney();
 }
+// Deep-link: open a shared event page directly on load
+if((location.hash||'').startsWith('#event/')){ setTimeout(()=>{ try{ routeEvents(); }catch(e){} }, 0); }
 
 window.toggleNav = function(){
   document.getElementById('navLinks').classList.toggle('open');
@@ -1500,6 +2098,1119 @@ function renderMemberGrid(){
 
 // ---- ADMIN ----
 let adminOpen = false;
+// ==================== GLOBAL AUTH / IDENTITY ====================
+window.openAuth = function(){
+  document.getElementById('authOverlay').classList.add('open');
+  showAuthView(S.user ? 'profile' : 'login');
+};
+window.closeAuth = function(){
+  document.getElementById('authOverlay').classList.remove('open');
+  ['loginErr','signupErr','profErr'].forEach(id=>{const e=document.getElementById(id); if(e){e.style.display='none';e.textContent='';}});
+};
+window.handleAuthNav = function(){ openAuth(); };
+window.showAuthView = function(view){
+  document.getElementById('authLoginView').style.display   = view==='login'   ? 'block':'none';
+  document.getElementById('authSignupView').style.display  = view==='signup'  ? 'block':'none';
+  document.getElementById('authVerifyView').style.display  = view==='verify'  ? 'block':'none';
+  document.getElementById('authProfileView').style.display = view==='profile' ? 'block':'none';
+  if(view==='verify' && S.user){
+    document.getElementById('otpEmailLabel').textContent = S.user.email || 'your email';
+    const oi=document.getElementById('otpInput'); if(oi){ oi.value=''; setTimeout(()=>oi.focus(),50); }
+  }
+  if(view==='profile' && S.user){
+    document.getElementById('profAvatar').textContent = initials(S.user.name||S.user.email||'?')||'?';
+    document.getElementById('profName').textContent = S.user.name || '(no name set)';
+    document.getElementById('profMeta').textContent = [S.user.class, S.user.email].filter(Boolean).join(' · ');
+    document.getElementById('profNameInput').value = S.user.name || '';
+    document.getElementById('profClassInput').value = S.user.class || '';
+    document.getElementById('profPhoneInput').value = S.user.phone || '';
+    if(typeof updateNotifBtn==='function') updateNotifBtn();
+    const vr=document.getElementById('profVerifyRow');
+    if(vr){
+      vr.innerHTML = S.user.verified
+        ? `<div class="auth-profile" style="color:#1a9e5c;font-weight:700"><i class="fa-solid fa-circle-check"></i> Email verified</div>`
+        : `<div class="auth-profile" style="justify-content:space-between">
+             <span style="color:var(--accent3);font-weight:700"><i class="fa-solid fa-triangle-exclamation"></i> Email not verified</span>
+             <button class="btn btn-primary btn-sm" onclick="startVerify()">Verify now</button>
+           </div>`;
+    }
+  }
+};
+function authErr(id,msg){ const e=document.getElementById(id); if(e){e.textContent=msg;e.style.display='block';} }
+function friendlyAuthError(code){
+  const map={
+    'auth/invalid-email':'That email address is not valid.',
+    'auth/user-not-found':'No account found with this email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Email or password is incorrect.',
+    'auth/email-already-in-use':'This email is already registered — please log in.',
+    'auth/weak-password':'Password must be at least 6 characters.',
+    'auth/too-many-requests':'Too many attempts. Please try again in a little while.',
+    'auth/network-request-failed':'Network problem — please check your internet connection.',
+    'auth/operation-not-allowed':'Email/Password sign-in is not enabled in the Firebase console (Authentication → Sign-in method).',
+  };
+  return map[code] || ('Error: '+code);
+}
+window.doSignup = async function(){
+  const name=document.getElementById('suName').value.trim();
+  const klass=document.getElementById('suClass').value.trim();
+  const phone=document.getElementById('suPhone').value.trim();
+  const email=document.getElementById('suEmail').value.trim();
+  const pass=document.getElementById('suPass').value;
+  if(!name){ authErr('signupErr','Please enter your name.'); return; }
+  if(!email){ authErr('signupErr','Please enter your email.'); return; }
+  if(pass.length<6){ authErr('signupErr','Password must be at least 6 characters.'); return; }
+  const btn=document.getElementById('signupBtn'); btn.disabled=true; btn.textContent='Creating…';
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    try{ await updateProfile(cred.user,{displayName:name}); }catch(e){}
+    await set(ref(db,'users/'+cred.user.uid),{name,class:klass,phone,email,verified:false,createdAt:Date.now()});
+    // S.user gets populated by onAuthStateChanged; set eagerly so verify step has it now.
+    S.user={ uid:cred.user.uid, email, name, class:klass, phone, verified:false };
+    applyIdentity();
+    try{ await applyReferral(cred.user.uid); }catch(e){}
+    if(emailjsConfigured()){
+      toast('Account created! Now verify your email.','success');
+      showAuthView('verify');
+      sendOtp();
+    }else{
+      toast('Account created! (Email verification works once EmailJS is set up.)','success');
+      showAuthView('profile');
+    }
+  }catch(e){ authErr('signupErr',friendlyAuthError(e.code||e.message)); }
+  finally{ btn.disabled=false; btn.textContent='Create Account'; }
+};
+window.doLogin = async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!email||!pass){ authErr('loginErr','Please enter both email and password.'); return; }
+  const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.textContent='Logging in…';
+  try{
+    await signInWithEmailAndPassword(auth,email,pass);
+    toast('Welcome back!','success');
+    closeAuth();
+  }catch(e){ authErr('loginErr',friendlyAuthError(e.code||e.message)); }
+  finally{ btn.disabled=false; btn.textContent='Login'; }
+};
+window.doLogout = async function(){
+  try{ await signOut(auth); toast('Logged out','success'); closeAuth(); }
+  catch(e){ toast('Logout failed','error'); }
+};
+window.doPasswordReset = async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email){ authErr('loginErr','Enter your email first, then click "Forgot password".'); return; }
+  try{ await sendPasswordResetEmail(auth,email); toast('Password reset link sent to your email.','success'); }
+  catch(e){ authErr('loginErr',friendlyAuthError(e.code||e.message)); }
+};
+window.saveProfile = async function(){
+  if(!S.user) return;
+  const name=document.getElementById('profNameInput').value.trim();
+  const klass=document.getElementById('profClassInput').value.trim();
+  const phone=document.getElementById('profPhoneInput').value.trim();
+  if(!name){ authErr('profErr','Name cannot be empty.'); return; }
+  try{
+    await update(ref(db,'users/'+S.user.uid),{name,class:klass,phone});
+    S.user.name=name; S.user.class=klass; S.user.phone=phone;
+    applyIdentity();
+    toast('Profile updated','success');
+    showAuthView('profile');
+  }catch(e){ authErr('profErr','Save failed: '+(e.message||e.code)); }
+};
+// ---- Email OTP (6-digit) via EmailJS ----
+function genOtp(){ return String(Math.floor(100000 + Math.random()*900000)); }
+window.startVerify = function(){
+  if(!S.user){ showAuthView('login'); return; }
+  showAuthView('verify');
+  ensureOtp();
+};
+async function sendOtp(){
+  if(!S.user) return;
+  if(!emailjsConfigured()){
+    authErr('verifyErr','EmailJS is not set up yet — paste the 3 keys at the top of the index file.');
+    return;
+  }
+  const now = Date.now();
+  const lastSent = +(sessionStorage.getItem('wc_otp_sent')||0);
+  if(now - lastSent < 30000){
+    authErr('verifyErr','Please wait — you can resend in '+Math.ceil((30000-(now-lastSent))/1000)+'s.');
+    return;
+  }
+  const code = genOtp();
+  sessionStorage.setItem('wc_otp_code', code);
+  sessionStorage.setItem('wc_otp_uid', S.user.uid);
+  sessionStorage.setItem('wc_otp_exp', String(now + OTP_TTL_MIN*60000));
+  sessionStorage.setItem('wc_otp_sent', String(now));
+  sessionStorage.setItem('wc_otp_attempts', '0');
+  const btn=document.getElementById('verifyBtn'); if(btn) btn.disabled=true;
+  try{
+    const ej = await getEmailJS();
+    await ej.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { email:S.user.email, passcode:code, time:OTP_TTL_MIN+' minutes' });
+    toast('Code sent to '+S.user.email,'success');
+    const e=document.getElementById('verifyErr'); if(e) e.style.display='none';
+  }catch(err){
+    authErr('verifyErr','Could not send email: '+((err&&(err.text||err.message))||'unknown')+'. Check your EmailJS keys/template.');
+  }finally{ if(btn) btn.disabled=false; }
+}
+// Send a fresh code only if there isn't already a valid one outstanding.
+function ensureOtp(){
+  if(!S.user) return;
+  const code=sessionStorage.getItem('wc_otp_code');
+  const exp=+(sessionStorage.getItem('wc_otp_exp')||0);
+  const forUid=sessionStorage.getItem('wc_otp_uid');
+  if(code && forUid===S.user.uid && Date.now()<exp) return;
+  sendOtp();
+}
+window.resendOtp = function(){ sendOtp(); };
+window.doVerifyOtp = async function(){
+  if(!S.user){ showAuthView('login'); return; }
+  const entered=(document.getElementById('otpInput').value||'').trim();
+  const code=sessionStorage.getItem('wc_otp_code');
+  const exp=+(sessionStorage.getItem('wc_otp_exp')||0);
+  const forUid=sessionStorage.getItem('wc_otp_uid');
+  let attempts=+(sessionStorage.getItem('wc_otp_attempts')||0);
+  if(!code || forUid!==S.user.uid){ authErr('verifyErr','Click "Resend code" first.'); return; }
+  if(Date.now()>exp){ authErr('verifyErr','Code expired — please resend.'); return; }
+  if(attempts>=5){ authErr('verifyErr','Too many wrong attempts. Resend to get a new code.'); return; }
+  if(entered!==code){
+    attempts++; sessionStorage.setItem('wc_otp_attempts',String(attempts));
+    authErr('verifyErr','Wrong code. ('+(5-attempts)+' attempts left)'); return;
+  }
+  try{
+    await update(ref(db,'users/'+S.user.uid),{verified:true, verifiedAt:Date.now()});
+    S.user.verified=true;
+    ['wc_otp_code','wc_otp_uid','wc_otp_exp','wc_otp_attempts'].forEach(k=>sessionStorage.removeItem(k));
+    applyIdentity();
+    toast('Email verified! 🎉','success');
+    showAuthView('profile');
+  }catch(e){ authErr('verifyErr','Save failed: '+(e.message||e.code)); }
+};
+// Gate: run action only if logged-in AND verified; else nudge to login/verify.
+window.requireVerified = function(action){
+  if(!S.user){ toast('Please log in first','error'); openAuth(); return false; }
+  if(!S.user.verified){ toast('Please verify your email first','error'); openAuth(); showAuthView('verify'); ensureOtp(); return false; }
+  if(typeof action==='function') action();
+  return true;
+};
+
+// Reflect the current identity across the whole UI
+function applyIdentity(){
+  const btn=document.getElementById('authNavBtn');
+  const label=document.getElementById('authNavLabel');
+  const icon=document.getElementById('authNavIcon');
+  if(btn&&label&&icon){
+    if(S.user){
+      btn.classList.add('logged-in');
+      label.textContent=S.user.name || 'My Profile';
+      icon.className='fa-solid fa-circle-user';
+    }else{
+      btn.classList.remove('logged-in');
+      label.textContent='Login';
+      icon.className='fa-solid fa-right-to-bracket';
+    }
+  }
+  if(typeof renderDbParticipant==='function'){ try{ renderDbParticipant(); }catch(e){} }
+  if(typeof renderLearnerIdBar==='function'){ try{ renderLearnerIdBar(); }catch(e){} }
+  if(typeof renderQzParticipant==='function'){ try{ renderQzParticipant(); }catch(e){} }
+  if(typeof renderJourney==='function' && document.getElementById('page-journey') && document.getElementById('page-journey').classList.contains('active')){ try{ renderJourney(); }catch(e){} }
+  if(typeof syncAttendanceBadges==='function'){ try{ syncAttendanceBadges(); }catch(e){} }
+}
+// Single source of truth for "who am I" used by every feature
+window.identityName = function(){ return (S.user && S.user.name) ? S.user.name : null; };
+// React to Firebase auth state — persists across reloads automatically
+onAuthStateChanged(auth, async (fbUser)=>{
+  S.authReady = true;
+  if(fbUser){
+    let profile={};
+    try{ const snap=await get(ref(db,'users/'+fbUser.uid)); if(snap.exists()) profile=snap.val()||{}; }catch(e){}
+    S.user={ uid:fbUser.uid, email:fbUser.email, name:profile.name||fbUser.displayName||'', class:profile.class||'', phone:profile.phone||'', verified:!!profile.verified, house:profile.house||'' };
+  }else{
+    S.user=null;
+  }
+  applyIdentity();
+});
+
+// ==================== EVENTS ENGINE + CENTRAL REGISTRATION ====================
+S.events = {};      // {id: eventObj}
+S.eventRegs = {};   // {eventId: {uid: regObj}}
+let _evBannerData = null;  // admin banner upload as dataURL
+let _evEditId = null;      // event id being edited (null = create new)
+
+onValue(ref(db,'events'), snap=>{
+  S.events = snap.val() || {};
+  if(document.getElementById('page-events').classList.contains('active')) routeEvents();
+  renderAdminEvents();
+});
+onValue(ref(db,'eventRegs'), snap=>{
+  S.eventRegs = snap.val() || {};
+  if(document.getElementById('page-events').classList.contains('active')) routeEvents();
+  renderAdminEvents();
+});
+
+function esc(s){ return escapeHtml(s==null?'':String(s)); }
+function eventsSorted(){ return Object.entries(S.events).map(([id,e])=>({id,...e})).sort((a,b)=>(a.dateTime||'').localeCompare(b.dateTime||'')); }
+function confirmedCount(id){ const r=S.eventRegs[id]||{}; return Object.values(r).filter(x=>x.status!=='waitlist').length; }
+function myReg(id){ return (S.user && S.eventRegs[id]) ? S.eventRegs[id][S.user.uid] : null; }
+function regOpen(e){ if(!e.regDeadline) return true; return Date.now() < new Date(e.regDeadline).getTime(); }
+function isFull(e,id){ const max=+(e.maxParticipants||0); if(!max) return false; return confirmedCount(id) >= max; }
+function fmtDT(s){ if(!s) return 'TBA'; try{ return new Date(s).toLocaleString([], {dateStyle:'medium', timeStyle:'short'}); }catch(e){ return s; } }
+function eventStatus(e,id){ if(!regOpen(e)) return {cls:'closed',txt:'Closed'}; if(isFull(e,id)) return {cls:'full',txt:'Full · Waitlist'}; return {cls:'open',txt:'Open'}; }
+
+// ---- public list + detail ----
+function renderEventsList(){
+  const grid = document.getElementById('eventsGrid'); if(!grid) return;
+  const list = eventsSorted();
+  if(!list.length){ grid.innerHTML = `<div class="ev-empty"><i class="fa-solid fa-calendar-xmark" style="font-size:34px;display:block;margin-bottom:10px;opacity:.3"></i>No events yet. Check back soon!</div>`; return; }
+  grid.innerHTML = list.map(e=>{
+    const st = eventStatus(e, e.id);
+    const banner = e.banner ? `style="background-image:url('${esc(e.banner)}')"` : '';
+    return `<div class="ev-card" onclick="location.hash='#event/${e.id}'">
+      <div class="ev-banner" ${banner}>
+        ${e.type?`<span class="ev-type-chip">${esc(e.type)}</span>`:''}
+        <span class="ev-status ${st.cls}">${st.txt}</span>
+      </div>
+      <div class="ev-cbody">
+        <div class="ev-cname">${esc(e.title)}</div>
+        <div class="ev-meta">
+          <span><i class="fa-solid fa-calendar"></i>${fmtDT(e.dateTime)}</span>
+          <span><i class="fa-solid fa-${e.mode==='online'?'video':'location-dot'}"></i>${e.mode==='online'?'Online':'Offline'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderEventDetail(id){
+  const e = S.events[id];
+  const listV = document.getElementById('eventsListView');
+  const detV = document.getElementById('eventDetailView');
+  if(!listV||!detV) return;
+  if(!e){ detV.style.display='none'; listV.style.display='block'; renderEventsList(); return; }
+  listV.style.display='none'; detV.style.display='block';
+  const mine = myReg(id);
+  const teamEv = +(e.teamSize||1) > 1;
+  const banner = e.banner ? `style="background-image:url('${esc(e.banner)}')"` : '';
+  const rulesHtml = (e.rules||'').trim() ? `<div class="ev-box"><h4>Rules</h4><p>${esc(e.rules)}</p></div>` : '';
+  let details;
+  if(mine){
+    const loc = e.mode==='online' ? (e.link||'TBA') : (e.venue||'TBA');
+    details = `<div class="ev-box"><h4>${e.mode==='online'?'Join Link':'Venue'}</h4><p>${(e.mode==='online' && e.link) ? `<a href="${esc(e.link)}" target="_blank" style="color:var(--accent);font-weight:700">${esc(e.link)}</a>` : esc(loc)}</p></div>`;
+  }else{
+    details = `<div class="ev-locked"><i class="fa-solid fa-lock" style="font-size:22px;display:block;margin-bottom:8px"></i><b>Register to unlock</b><br>${e.mode==='online'?'Join link':'Venue'} will be shown after you register.</div>`;
+  }
+  let cta;
+  if(mine){
+    cta = `<div class="ev-ticket">
+      <div style="font-size:12px;opacity:.9">Your Ticket</div>
+      <div class="tk-id">${esc(mine.ticketId)}</div>
+      <span class="tk-badge">${mine.status==='waitlist'?'🕒 Waitlisted':'✅ Registered'}</span>
+      ${mine.teamName?`<div style="font-size:12px;margin-top:8px">Team: <b>${esc(mine.teamName)}</b></div>`:''}
+      ${(mine.award && mine.award!=='participant')?`<button class="btn btn-sm btn-full" style="margin-top:10px;background:#f5a623;color:#3a2a00;font-weight:800" onclick="openResultCard('${id}')"><i class="fa-solid fa-trophy"></i> Share "I WON" card 🏆</button>`:''}
+      ${(e.mode==='offline'&&mine.status!=='waitlist')?`<button class="btn btn-sm btn-full" style="margin-top:8px;background:#fff;color:#1a2d6b;font-weight:800" onclick="openQR('${id}')"><i class="fa-solid fa-qrcode"></i> ${mine.checkedIn?'View QR · Checked in ✓':'Show Check-in QR'}</button>`:''}
+      ${(e.cert&&e.cert.enabled&&mine.status!=='waitlist')?`<button class="btn btn-sm btn-full" style="margin-top:8px;background:#fff;color:#1a2d6b;font-weight:800" onclick="openCertModal('${id}')"><i class="fa-solid fa-award"></i> Get your Certificate</button>`:''}
+      <button class="btn btn-sm btn-full" style="margin-top:8px;background:rgba(255,255,255,.2);color:#fff" onclick="cancelMyReg('${id}')">Cancel registration</button>
+    </div>`;
+  }else if(!regOpen(e)){
+    cta = `<button class="btn btn-full" disabled style="opacity:.6">Registration closed</button>`;
+  }else{
+    cta = `<button class="btn btn-primary btn-full" onclick="openRegModal('${id}')"><i class="fa-solid fa-ticket"></i> ${isFull(e,id)?'Join Waitlist':'Register'}</button>`;
+  }
+  const max = +(e.maxParticipants||0);
+  detV.innerHTML = `
+    <button class="ev-back" onclick="location.hash=''"><i class="fa-solid fa-arrow-left"></i> All events</button>
+    <div class="ev-detail-banner" ${banner}></div>
+    <div class="ev-d-title">${esc(e.title)}</div>
+    <div class="ev-d-metarow">
+      ${e.type?`<span><i class="fa-solid fa-tag"></i>${esc(e.type)}</span>`:''}
+      <span><i class="fa-solid fa-calendar"></i>${fmtDT(e.dateTime)}</span>
+      <span><i class="fa-solid fa-${e.mode==='online'?'video':'location-dot'}"></i>${e.mode==='online'?'Online':'Offline'}</span>
+      <span><i class="fa-solid fa-user-group"></i>${teamEv?('Team of '+e.teamSize):'Solo'}</span>
+      <span><i class="fa-solid fa-users"></i>${confirmedCount(id)}${max?(' / '+max):''} registered</span>
+      <span><i class="fa-solid fa-hourglass-end"></i>Reg by ${fmtDT(e.regDeadline)}</span>
+    </div>
+    ${cta}
+    ${e.description?`<div class="ev-box"><h4>About</h4><p>${esc(e.description)}</p></div>`:''}
+    ${rulesHtml}
+    ${details}
+    <div style="text-align:center;margin-top:10px"><button class="btn btn-sm" onclick="shareEvent('${id}')"><i class="fa-solid fa-share-nodes"></i> Share event</button></div>
+  `;
+}
+// ---- hash routing (#event/{id} = shareable public page) ----
+function routeEvents(){
+  const m = (location.hash||'').match(/^#event\/(.+)$/);
+  if(m){
+    if(!document.getElementById('page-events').classList.contains('active')) showPage('events');
+    renderEventDetail(decodeURIComponent(m[1]));
+  }else{
+    const detV=document.getElementById('eventDetailView'), listV=document.getElementById('eventsListView');
+    if(detV) detV.style.display='none';
+    if(listV) listV.style.display='block';
+    renderEventsList();
+  }
+}
+window.addEventListener('hashchange', ()=>{
+  if((location.hash||'').startsWith('#event/') || document.getElementById('page-events').classList.contains('active')) routeEvents();
+});
+window.shareEvent = async function(id){
+  const url = location.origin+location.pathname+'#event/'+id;
+  const e = S.events[id]||{};
+  try{
+    if(navigator.share){ await navigator.share({title:e.title||'Event', url}); }
+    else{ await navigator.clipboard.writeText(url); toast('Event link copied!','success'); }
+  }catch(err){ try{ await navigator.clipboard.writeText(url); toast('Link copied!','success'); }catch(e2){ toast(url); } }
+};
+// ---- registration ----
+window.openRegModal = function(id){
+  if(!requireVerified()) return;
+  const e = S.events[id]; if(!e) return;
+  if(!regOpen(e)){ toast('Registration has closed','error'); return; }
+  if(myReg(id)){ toast('You are already registered','error'); return; }
+  document.getElementById('regEventName').textContent = e.title;
+  const teamEv = +(e.teamSize||1) > 1;
+  const full = isFull(e,id);
+  let teamFields='';
+  if(teamEv){
+    const extra = +e.teamSize - 1;
+    let inputs='';
+    for(let i=1;i<=extra;i++){ inputs += `<input class="a-input" id="regTM${i}" placeholder="Team member ${i+1} name"/>`; }
+    teamFields = `<label class="auth-label">Team name</label><input class="a-input" id="regTeam" placeholder="Your team name"/>
+      <label class="auth-label">Team members</label>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">You (${esc(S.user.name)}) = member 1. Add ${extra} more:</div>${inputs}`;
+  }
+  document.getElementById('regModalBody').innerHTML = `
+    ${full?`<div style="background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.4);color:#b9780f;font-size:12px;padding:8px 10px;border-radius:8px;margin-bottom:10px"><i class="fa-solid fa-hourglass-half"></i> Event is full — you'll be added to the waitlist.</div>`:''}
+    <label class="auth-label">Name</label><input class="a-input" id="regName" value="${esc(S.user.name)}"/>
+    <div class="a-row2">
+      <div><label class="auth-label">Class</label><input class="a-input" id="regClass" value="${esc(S.user.class||'')}"/></div>
+      <div><label class="auth-label">Phone</label><input class="a-input" id="regPhone" value="${esc(S.user.phone||'')}"/></div>
+    </div>
+    ${teamFields}
+    <div class="auth-err" id="regErr"></div>
+    <button class="btn btn-primary btn-full" id="regSubmitBtn" onclick="submitEventReg('${id}')"><i class="fa-solid fa-paper-plane"></i> ${full?'Join Waitlist':'Confirm Registration'}</button>
+  `;
+  document.getElementById('regOverlay').classList.add('open');
+};
+window.closeRegModal = function(){ document.getElementById('regOverlay').classList.remove('open'); };
+function genTicket(id){
+  const pref = ((S.events[id]&&S.events[id].title)||'WC').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()||'WC';
+  return pref+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
+}
+window.submitEventReg = async function(id){
+  if(!requireVerified()) return;
+  const e = S.events[id]; if(!e) return;
+  if(!regOpen(e)){ authErr('regErr','Registration has closed.'); return; }
+  if(myReg(id)){ authErr('regErr','Already registered.'); return; }
+  const name=document.getElementById('regName').value.trim();
+  const klass=document.getElementById('regClass').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  if(!name){ authErr('regErr','Please enter your name.'); return; }
+  const teamEv = +(e.teamSize||1) > 1;
+  let teamName='', teamMembers=[];
+  if(teamEv){
+    teamName=(document.getElementById('regTeam').value||'').trim();
+    if(!teamName){ authErr('regErr','Please enter a team name.'); return; }
+    teamMembers=[name];
+    for(let i=1;i<+e.teamSize;i++){ const el=document.getElementById('regTM'+i); const v=el?el.value.trim():''; if(v) teamMembers.push(v); }
+  }
+  const status = isFull(e,id) ? 'waitlist' : 'registered';
+  const rec = { uid:S.user.uid, name, class:klass, phone, email:S.user.email, ticketId:genTicket(id), status, registeredAt:Date.now() };
+  if(teamEv){ rec.teamName=teamName; rec.teamMembers=teamMembers; }
+  const btn=document.getElementById('regSubmitBtn'); if(btn) btn.disabled=true;
+  try{
+    await set(ref(db,'eventRegs/'+id+'/'+S.user.uid), rec);
+    toast(status==='waitlist'?'Added to the waitlist!':'Registered! Ticket: '+rec.ticketId,'success');
+    closeRegModal();
+    renderEventDetail(id);
+  }catch(err){ authErr('regErr','Failed: '+(err.message||err.code)); if(btn) btn.disabled=false; }
+};
+window.cancelMyReg = async function(id){
+  if(!S.user || !myReg(id)) return;
+  if(!confirm('Cancel your registration?')) return;
+  try{ await remove(ref(db,'eventRegs/'+id+'/'+S.user.uid)); toast('Registration cancelled','success'); renderEventDetail(id); }
+  catch(e){ toast('Cancel failed','error'); }
+};
+// ---- admin: create / manage events ----
+window.evBannerPick = function(ev){
+  const f = ev.target.files && ev.target.files[0]; if(!f) return;
+  if(f.size > 900000){ toast('Image is larger than ~900KB. Use a smaller one or provide a URL.','error'); ev.target.value=''; return; }
+  const r = new FileReader();
+  r.onload = ()=>{ _evBannerData = r.result; document.getElementById('evBannerPreview').innerHTML = '✅ Image ready ('+Math.round(f.size/1024)+' KB)'; };
+  r.readAsDataURL(f);
+};
+window.adminResetEventForm = function(){
+  ['evTitle','evType','evBannerUrl','evDesc','evRules','evDateTime','evVenue','evLink','evDeadline'].forEach(i=>{const el=document.getElementById(i); if(el) el.value='';});
+  document.getElementById('evTeamSize').value='1';
+  document.getElementById('evMax').value='0';
+  document.getElementById('evMode').value='offline';
+  document.getElementById('evBannerFile').value='';
+  document.getElementById('evBannerPreview').innerHTML='';
+  _evBannerData=null; _evEditId=null;
+  document.getElementById('evSaveBtn').innerHTML='<i class="fa-solid fa-floppy-disk"></i> Create Event';
+};
+window.adminSaveEvent = async function(){
+  if(!S.isAdmin){ toast('Admin only','error'); return; }
+  const title=document.getElementById('evTitle').value.trim();
+  if(!title){ toast('Please enter an event title','error'); return; }
+  const banner = _evBannerData || document.getElementById('evBannerUrl').value.trim();
+  const rec = {
+    title,
+    type: document.getElementById('evType').value.trim(),
+    banner: banner||'',
+    description: document.getElementById('evDesc').value.trim(),
+    rules: document.getElementById('evRules').value.trim(),
+    dateTime: document.getElementById('evDateTime').value,
+    mode: document.getElementById('evMode').value,
+    venue: document.getElementById('evVenue').value.trim(),
+    link: document.getElementById('evLink').value.trim(),
+    maxParticipants: +document.getElementById('evMax').value || 0,
+    teamSize: +document.getElementById('evTeamSize').value || 1,
+    regDeadline: document.getElementById('evDeadline').value,
+    updatedAt: Date.now()
+  };
+  try{
+    if(_evEditId){ await update(ref(db,'events/'+_evEditId), rec); toast('Event updated','success'); }
+    else{ rec.createdAt=Date.now(); rec.createdBy=(S.user&&S.user.uid)||'admin'; await set(push(ref(db,'events')), rec); toast('Event created!','success'); }
+    adminResetEventForm();
+  }catch(e){ toast('Save failed: '+(e.message||e.code),'error'); }
+};
+window.adminEditEvent = function(id){
+  const e = S.events[id]; if(!e) return;
+  _evEditId = id;
+  document.getElementById('evTitle').value=e.title||'';
+  document.getElementById('evType').value=e.type||'';
+  document.getElementById('evBannerUrl').value=(e.banner&&!e.banner.startsWith('data:'))?e.banner:'';
+  _evBannerData=(e.banner&&e.banner.startsWith('data:'))?e.banner:null;
+  document.getElementById('evBannerPreview').innerHTML=_evBannerData?'✅ Uploaded image kept':'';
+  document.getElementById('evDesc').value=e.description||'';
+  document.getElementById('evRules').value=e.rules||'';
+  document.getElementById('evDateTime').value=e.dateTime||'';
+  document.getElementById('evMode').value=e.mode||'offline';
+  document.getElementById('evVenue').value=e.venue||'';
+  document.getElementById('evLink').value=e.link||'';
+  document.getElementById('evMax').value=e.maxParticipants||0;
+  document.getElementById('evTeamSize').value=e.teamSize||1;
+  document.getElementById('evDeadline').value=e.regDeadline||'';
+  document.getElementById('evSaveBtn').innerHTML='<i class="fa-solid fa-floppy-disk"></i> Update Event';
+  document.getElementById('evTitle').scrollIntoView({behavior:'smooth',block:'center'});
+};
+window.adminDeleteEvent = async function(id){
+  if(!S.isAdmin) return;
+  if(!confirm('Delete this event? Its registrations will be deleted too.')) return;
+  try{ await remove(ref(db,'events/'+id)); await remove(ref(db,'eventRegs/'+id)); toast('Event deleted','success'); }
+  catch(e){ toast('Delete failed','error'); }
+};
+function renderAdminEvents(){
+  const el = document.getElementById('adminEventsList'); if(!el) return;
+  const list = eventsSorted();
+  if(!list.length){ el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0">No events yet.</div>'; return; }
+  const awardOpts=(a)=>['participant','1st','2nd','3rd'].map(v=>`<option value="${v}" ${(a||'participant')===v?'selected':''}>${AWARD_LABEL[v]}</option>`).join('');
+  el.innerHTML = list.map(e=>{
+    const entries = Object.entries(S.eventRegs[e.id]||{});
+    const conf = entries.filter(x=>x[1].status!=='waitlist').length;
+    const wait = entries.filter(x=>x[1].status==='waitlist').length;
+    const cfg = e.cert||{};
+    const checkedCount = entries.filter(x=>x[1].checkedIn).length;
+    const rows = entries.length ? entries.map(([uid,r])=>`<div class="reg-row" style="align-items:center;flex-wrap:wrap;gap:6px">
+        <span style="flex:1;min-width:120px">${r.checkedIn?'<i class="fa-solid fa-circle-check" style="color:#1a9e5c" title="Checked in"></i> ':''}${esc(r.name)} · ${esc(r.class||'-')}${r.teamName?(' · <b>'+esc(r.teamName)+'</b>'):''} <span class="${r.status==='waitlist'?'rr-wait':'rr-ok'}">${r.status==='waitlist'?'waitlist':esc(r.ticketId)}</span></span>
+        <select class="award-sel" onchange="setAward('${e.id}','${uid}',this.value)">${awardOpts(r.award)}</select>
+        <button class="btn btn-ghost btn-sm" title="${r.checkedIn?'Undo check-in':'Manual check-in'}" onclick="markCheckIn('${e.id}','${uid}',${!r.checkedIn})"><i class="fa-solid fa-${r.checkedIn?'user-check':'user-clock'}"></i></button>
+        <button class="btn btn-ghost btn-sm" title="Certificate" onclick="openCertModal('${e.id}','${uid}')"><i class="fa-solid fa-award"></i></button>
+        <button class="btn btn-ghost btn-sm" title="Result card" onclick="openResultCard('${e.id}','${uid}')"><i class="fa-solid fa-trophy"></i></button>
+      </div>`).join('') : '<div style="font-size:11px;color:var(--text3)">No registrations yet.</div>';
+    return `<div style="border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="font-weight:800">${esc(e.title)} ${cfg.enabled?'<span style="font-size:10px;color:#1a9e5c">🏅 certs on</span>':''}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="adminEditEvent('${e.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="adminDeleteEvent('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin:4px 0 8px">${conf} registered · ${wait} waitlist · ${checkedCount} checked-in · ${fmtDT(e.dateTime)}</div>
+      <details id="regd_${e.id}" ontoggle="detToggle(this)"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">Registrations &amp; Awards (${entries.length})</summary>
+        <div style="margin:8px 0">${rows}</div>
+        <button class="btn btn-sm btn-full" onclick="exportEventRegs('${e.id}')"><i class="fa-solid fa-copy"></i> Copy as CSV</button>
+        <button class="btn btn-green btn-sm btn-full" style="margin-top:6px" onclick="distributeEventHousePoints('${e.id}')"><i class="fa-solid fa-trophy"></i> Give House Points (by award)${e.housePointsDone?' ✓':''}</button>
+      </details>
+      <details id="certd_${e.id}" ontoggle="detToggle(this)"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--accent2);margin-top:6px">🏅 Certificate settings</summary>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin:8px 0"><input type="checkbox" id="certEnable_${e.id}" ${cfg.enabled?'checked':''}/> Enable certificates for this event</label>
+        <input class="a-input" id="certHeading_${e.id}" placeholder="Heading (blank = auto)" value="${esc(cfg.heading||'')}"/>
+        <input class="a-input" id="certOrg_${e.id}" placeholder="Organization name" value="${esc(cfg.org||'WebCrafters Club')}"/>
+        <div class="a-row2">
+          <input class="a-input" id="certSign_${e.id}" placeholder="Signatory name" value="${esc(cfg.signName||'')}"/>
+          <input class="a-input" id="certTitle_${e.id}" placeholder="Signatory title" value="${esc(cfg.signTitle||'Club Coordinator')}"/>
+        </div>
+        <button class="btn btn-primary btn-sm btn-full" onclick="saveCertConfig('${e.id}')"><i class="fa-solid fa-floppy-disk"></i> Save Certificate Settings</button>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Set the winners' awards above → Enable → members can download their own certificate.</div>
+      </details>
+    </div>`;
+  }).join('');
+  _openDetails.forEach(idd=>{ const d=document.getElementById(idd); if(d) d.open=true; });
+}
+window.exportEventRegs = async function(id){
+  const arr = Object.values(S.eventRegs[id]||{});
+  const header = ['Ticket','Name','Class','Phone','Email','Status','Team','Members','RegisteredAt'];
+  const lines = [header.join(',')];
+  arr.forEach(r=>{
+    const row=[r.ticketId,r.name,r.class||'',r.phone||'',r.email||'',r.status||'',r.teamName||'',(r.teamMembers||[]).join(' | '),new Date(r.registeredAt||0).toLocaleString()];
+    lines.push(row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  });
+  const csv = lines.join('\n');
+  try{ await navigator.clipboard.writeText(csv); toast('CSV copied! ('+arr.length+' rows)','success'); }
+  catch(e){ prompt('Copy CSV:', csv); }
+};
+
+// ==================== AUTO-GENERATED CERTIFICATES ====================
+const AWARD_LABEL = { participant:'Participant', '1st':'1st Place', '2nd':'2nd Place', '3rd':'3rd Place' };
+let _certLast = null;
+function drawCertificate(canvas, d){
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const NAVY='#1a2d6b', GOLD='#f5a623', RED='#d42b2b', INK='#16204a', GREY='#5a6280';
+  const isWinner = d.award && d.award!=='participant';
+  const cx = W/2;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fbfcff'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=NAVY; ctx.lineWidth=14; ctx.strokeRect(28,28,W-56,H-56);
+  ctx.strokeStyle=GOLD; ctx.lineWidth=3;  ctx.strokeRect(48,48,W-96,H-96);
+  ctx.fillStyle=GOLD;
+  [[48,48],[W-48,48],[48,H-48],[W-48,H-48]].forEach(p=>{ ctx.beginPath(); ctx.arc(p[0],p[1],10,0,Math.PI*2); ctx.fill(); });
+  ctx.textAlign='center';
+  // emblem
+  ctx.fillStyle=NAVY; ctx.beginPath(); ctx.arc(cx,150,44,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=GOLD; ctx.font='bold 32px Syne, sans-serif'; ctx.textBaseline='middle'; ctx.fillText('</>', cx, 152);
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle=NAVY; ctx.font='bold 26px Syne, sans-serif'; ctx.fillText((d.org||'WebCrafters Club').toUpperCase(), cx, 232);
+  ctx.fillStyle=GOLD; ctx.font='700 15px "DM Sans", sans-serif'; ctx.fillText('• • •', cx, 262);
+  ctx.fillStyle=INK; ctx.font='bold 46px Syne, sans-serif';
+  const heading = (d.heading || (isWinner ? 'Certificate of Achievement' : 'Certificate of Participation')).toUpperCase();
+  ctx.fillText(heading, cx, 320);
+  ctx.fillStyle=GREY; ctx.font='italic 20px Georgia, serif'; ctx.fillText('This is proudly presented to', cx, 380);
+  let name=d.name||'Participant', fs=66; ctx.font='bold '+fs+'px Georgia, serif';
+  while(ctx.measureText(name).width > W-260 && fs>28){ fs-=2; ctx.font='bold '+fs+'px Georgia, serif'; }
+  ctx.fillStyle=NAVY; ctx.fillText(name, cx, 452);
+  const nw = Math.min(ctx.measureText(name).width+80, W-200);
+  ctx.strokeStyle=GOLD; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cx-nw/2,470); ctx.lineTo(cx+nw/2,470); ctx.stroke();
+  ctx.fillStyle=GREY; ctx.font='20px "DM Sans", sans-serif';
+  ctx.fillText(isWinner ? ('for securing '+AWARD_LABEL[d.award]+' in') : 'for actively participating in', cx, 512);
+  let ev=d.event||'the event', efs=30; ctx.font='bold '+efs+'px Syne, sans-serif';
+  while(ctx.measureText(ev).width > W-260 && efs>16){ efs-=1; ctx.font='bold '+efs+'px Syne, sans-serif'; }
+  ctx.fillStyle=RED; ctx.fillText(ev, cx, 552);
+  ctx.fillStyle=GREY; ctx.font='16px "DM Sans", sans-serif'; if(d.date) ctx.fillText(d.date, cx, 588);
+  const sy=H-150;
+  ctx.strokeStyle=INK; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(150,sy); ctx.lineTo(370,sy); ctx.stroke();
+  ctx.fillStyle=INK; ctx.font='bold 15px "DM Sans", sans-serif'; ctx.fillText(d.issued||'Date', 260, sy+26);
+  ctx.beginPath(); ctx.moveTo(W-370,sy); ctx.lineTo(W-150,sy); ctx.stroke();
+  ctx.fillStyle=INK; ctx.font='bold 18px Georgia, serif'; ctx.fillText(d.signName||'Coordinator', W-260, sy+24);
+  ctx.fillStyle=GREY; ctx.font='13px "DM Sans", sans-serif'; ctx.fillText(d.signTitle||'Club Coordinator', W-260, sy+44);
+  ctx.save(); ctx.translate(cx, sy+6);
+  ctx.fillStyle= isWinner ? GOLD : NAVY; ctx.beginPath(); ctx.arc(0,0,42,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,34,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='bold 30px Syne, sans-serif'; ctx.textBaseline='middle'; ctx.fillText(isWinner?'★':'✓', 0, 2);
+  ctx.restore(); ctx.textBaseline='alphabetic';
+  if(d.ticketId){ ctx.fillStyle=GREY; ctx.font='11px "DM Sans", sans-serif'; ctx.fillText('Certificate ID: '+d.ticketId, cx, H-60); }
+}
+async function openCertModal(eventId, forUid){
+  const e = S.events[eventId]; if(!e) return;
+  const cfg = e.cert || {};
+  const uid = forUid || (S.user && S.user.uid);
+  const reg = (S.eventRegs[eventId]||{})[uid];
+  if(!reg){ toast('Registration not found','error'); return; }
+  const d = {
+    name: reg.teamName ? (reg.name+' ('+reg.teamName+')') : reg.name,
+    event: e.title, award: reg.award || 'participant',
+    org: cfg.org || 'WebCrafters Club', heading: cfg.heading || '',
+    signName: cfg.signName || '', signTitle: cfg.signTitle || 'Club Coordinator',
+    date: e.dateTime ? ('Event: '+fmtDT(e.dateTime)) : '',
+    issued: 'Issued '+new Date().toLocaleDateString(), ticketId: reg.ticketId
+  };
+  _certLast = { name: reg.name, event: e.title };
+  document.getElementById('certOverlay').classList.add('open');
+  try{ if(document.fonts && document.fonts.ready) await document.fonts.ready; }catch(e2){}
+  drawCertificate(document.getElementById('certCanvas'), d);
+}
+window.openCertModal = openCertModal;
+window.closeCert = function(){ document.getElementById('certOverlay').classList.remove('open'); };
+function certFilename(ext){ const n=((_certLast&&_certLast.name)||'certificate').replace(/[^a-z0-9]+/gi,'_'); const e=((_certLast&&_certLast.event)||'event').replace(/[^a-z0-9]+/gi,'_'); return n+'_'+e+'.'+ext; }
+window.downloadCert = function(){ const c=document.getElementById('certCanvas'); const a=document.createElement('a'); a.download=certFilename('png'); a.href=c.toDataURL('image/png'); a.click(); };
+window.shareCert = async function(){
+  const c=document.getElementById('certCanvas');
+  try{
+    const blob = await new Promise(res=>c.toBlob(res,'image/png'));
+    const file = new File([blob], certFilename('png'), {type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'My Certificate'}); }
+    else { downloadCert(); toast('Image downloaded — you can share it now','success'); }
+  }catch(e){ downloadCert(); }
+};
+window.printCert = function(){
+  const url = document.getElementById('certCanvas').toDataURL('image/png');
+  const w = window.open(''); if(!w){ toast('Popup was blocked','error'); return; }
+  w.document.write('<img src="'+url+'" style="width:100%" onload="window.print()"/>'); w.document.close();
+};
+// admin cert controls
+window.setAward = async function(eventId, uid, award){
+  if(!S.isAdmin) return;
+  try{ await update(ref(db,'eventRegs/'+eventId+'/'+uid), {award}); }catch(e){ toast('Award save failed','error'); }
+};
+window.saveCertConfig = async function(id){
+  if(!S.isAdmin) return;
+  const cfg = {
+    enabled: document.getElementById('certEnable_'+id).checked,
+    heading: document.getElementById('certHeading_'+id).value.trim(),
+    org: document.getElementById('certOrg_'+id).value.trim(),
+    signName: document.getElementById('certSign_'+id).value.trim(),
+    signTitle: document.getElementById('certTitle_'+id).value.trim()
+  };
+  try{ await update(ref(db,'events/'+id), {cert:cfg}); toast(cfg.enabled?'Certificates enabled! Members can now download them.':'Certificate settings saved','success'); }
+  catch(e){ toast('Save failed','error'); }
+};
+const _openDetails = new Set();
+window.detToggle = function(el){ if(el.open) _openDetails.add(el.id); else _openDetails.delete(el.id); };
+
+// ==================== HOUSE / SQUAD SYSTEM ====================
+S.houses = {};        // {id:{name,color,icon}}
+S.housePoints = {};   // {pushId:{houseId,points,reason,ts}}
+S.usersAll = {};      // {uid:{...}} — for member counts & house lookup
+const AWARD_POINTS = { '1st':50, '2nd':30, '3rd':20, participant:5 };
+const DEFAULT_HOUSES = [
+  {name:'Phoenix', color:'#d42b2b', icon:'🔥'},
+  {name:'Falcons', color:'#1a2d6b', icon:'🦅'},
+  {name:'Titans',  color:'#1a9e5c', icon:'⚡'},
+  {name:'Vipers',  color:'#7b2ff7', icon:'🐍'}
+];
+onValue(ref(db,'houses'), snap=>{ S.houses = snap.val()||{}; refreshHouseUI(); });
+onValue(ref(db,'housePoints'), snap=>{ S.housePoints = snap.val()||{}; refreshHouseUI(); });
+onValue(ref(db,'users'), snap=>{ S.usersAll = snap.val()||{}; refreshHouseUI(); });
+
+function houseTotals(){ const t={}; Object.keys(S.houses).forEach(id=>t[id]=0); Object.values(S.housePoints).forEach(p=>{ if(p&&p.houseId!=null) t[p.houseId]=(t[p.houseId]||0)+(+p.points||0); }); return t; }
+function houseMemberCount(){ const c={}; Object.values(S.usersAll).forEach(u=>{ if(u&&u.house) c[u.house]=(c[u.house]||0)+1; }); return c; }
+function myHouseId(){ if(!S.user) return null; return (S.usersAll[S.user.uid]||{}).house || S.user.house || null; }
+function refreshHouseUI(){
+  const p=document.getElementById('page-houses');
+  if(p && p.classList.contains('active')) renderHouses();
+  renderAdminHouses(); renderHousePointsSelect(); renderHousePointsLog();
+}
+function renderHouses(){
+  const lb=document.getElementById('houseLeaderboard'); if(!lb) return;
+  const ids=Object.keys(S.houses), totals=houseTotals(), counts=houseMemberCount(), mine=myHouseId();
+  const mineArea=document.getElementById('houseMineArea'), joinArea=document.getElementById('houseJoinArea');
+  if(!ids.length){ lb.innerHTML=`<div class="ev-empty"><i class="fa-solid fa-shield-halved" style="font-size:34px;display:block;margin-bottom:10px;opacity:.3"></i>No houses set up yet. Add them from the admin panel or use "Seed 4 default houses".</div>`; if(mineArea)mineArea.innerHTML=''; if(joinArea)joinArea.innerHTML=''; return; }
+  if(mineArea){
+    if(mine && S.houses[mine]){ const h=S.houses[mine]; mineArea.innerHTML=`<div class="house-mine-banner" style="background:${esc(h.color||'#1a2d6b')}"><span class="hmb-ic">${esc(h.icon||'🏠')}</span><div><div style="font-size:12px;opacity:.9">Your House</div><div style="font-family:var(--font-display);font-size:20px;font-weight:800">${esc(h.name)}</div></div></div>`; }
+    else mineArea.innerHTML='';
+  }
+  const sorted=ids.map(id=>({id,...S.houses[id],pts:totals[id]||0,members:counts[id]||0})).sort((a,b)=>b.pts-a.pts);
+  const maxPts=Math.max(1,...sorted.map(h=>h.pts));
+  const medals=['🥇','🥈','🥉'];
+  lb.innerHTML=sorted.map((h,i)=>`
+    <div class="house-card ${h.id===mine?'mine':''}" style="background:${esc(h.color||'#1a2d6b')}">
+      <div class="hc-top">
+        <div class="hc-rank">${medals[i]||('#'+(i+1))}</div>
+        <div class="hc-icon">${esc(h.icon||'🏠')}</div>
+        <div class="hc-name">${esc(h.name)}</div>
+        <div class="hc-pts">${h.pts}<small> pts</small></div>
+      </div>
+      <div class="hc-bar"><span style="width:${Math.round(h.pts/maxPts*100)}%"></span></div>
+      <div class="hc-sub">${h.members} member${h.members===1?'':'s'}${h.id===mine?' · Your house':''}</div>
+    </div>`).join('');
+  if(joinArea){
+    if(!S.user){ joinArea.innerHTML=`<div style="text-align:center;margin-top:22px"><button class="btn btn-primary" onclick="openAuth()"><i class="fa-solid fa-right-to-bracket"></i> Login to join a house</button></div>`; }
+    else{ joinArea.innerHTML=`<div style="margin-top:24px"><div style="font-weight:800;font-family:var(--font-display);font-size:16px;margin-bottom:4px">${mine?'Switch House':'Join a House'}</div>
+      <div style="font-size:12px;color:var(--text3)">${mine?'When you switch house, previously earned points stay with the old house.':'Choose a house, then earn points for it.'}</div>
+      <div class="house-pick">${sorted.map(h=>`<div class="hp-btn" style="background:${esc(h.color||'#1a2d6b')};${h.id===mine?'border-color:#fff':''}" onclick="joinHouse('${h.id}')"><span class="hp-ic">${esc(h.icon||'🏠')}</span>${esc(h.name)}${h.id===mine?' ✓':''}</div>`).join('')}</div></div>`; }
+  }
+}
+window.joinHouse = async function(id){
+  if(!S.user){ openAuth(); return; }
+  try{ await update(ref(db,'users/'+S.user.uid),{house:id}); S.user.house=id; toast('Joined: '+((S.houses[id]||{}).name||'house'),'success'); renderHouses(); }
+  catch(e){ toast('Failed to join','error'); }
+};
+// ---- admin houses ----
+function renderAdminHouses(){
+  const el=document.getElementById('adminHousesList'); if(!el) return;
+  const ids=Object.keys(S.houses), totals=houseTotals(), counts=houseMemberCount();
+  if(!ids.length){ el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0">No houses yet. Add or seed them.</div>'; return; }
+  el.innerHTML=ids.map(id=>{const h=S.houses[id];return `<div class="reg-row" style="align-items:center"><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${esc(h.color||'#000')};vertical-align:middle;margin-right:6px"></span>${esc(h.icon||'')} <b>${esc(h.name)}</b> · ${totals[id]||0} pts · ${counts[id]||0} members</span><button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="adminDeleteHouse('${id}')"><i class="fa-solid fa-trash"></i></button></div>`;}).join('');
+}
+function renderHousePointsSelect(){
+  const sel=document.getElementById('hpHouse'); if(!sel) return;
+  const ids=Object.keys(S.houses), cur=sel.value;
+  sel.innerHTML=ids.length?ids.map(id=>`<option value="${id}">${esc((S.houses[id].icon||'')+' '+S.houses[id].name)}</option>`).join(''):'<option value="">(no houses)</option>';
+  if(cur && S.houses[cur]) sel.value=cur;
+}
+function renderHousePointsLog(){
+  const el=document.getElementById('adminHousePointsLog'); if(!el) return;
+  const entries=Object.entries(S.housePoints).map(([k,v])=>({k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,30);
+  if(!entries.length){ el.innerHTML='<div style="font-size:11px;color:var(--text3)">No points awarded yet.</div>'; return; }
+  el.innerHTML=entries.map(p=>{const h=S.houses[p.houseId]||{};return `<div class="hpts-log-row"><span>${esc(h.icon||'')} ${esc(h.name||'?')} · ${esc(p.reason||'')}</span><span style="font-weight:800;color:${(+p.points||0)>=0?'#1a9e5c':'#c0392b'}">${(+p.points||0)>=0?'+':''}${+p.points||0}</span></div>`;}).join('');
+}
+window.adminAddHouse = async function(){
+  if(!S.isAdmin) return;
+  const name=document.getElementById('hNewName').value.trim(); if(!name){ toast('Please enter a house name','error'); return; }
+  const icon=document.getElementById('hNewIcon').value.trim()||'🏠';
+  const color=document.getElementById('hNewColor').value||'#1a2d6b';
+  try{ await set(push(ref(db,'houses')),{name,icon,color,createdAt:Date.now()}); document.getElementById('hNewName').value=''; document.getElementById('hNewIcon').value=''; toast('House added','success'); }
+  catch(e){ toast('Failed','error'); }
+};
+window.adminSeedHouses = async function(){
+  if(!S.isAdmin) return;
+  if(Object.keys(S.houses).length && !confirm('Houses already exist. Add the 4 defaults anyway?')) return;
+  try{ for(const h of DEFAULT_HOUSES){ await set(push(ref(db,'houses')),{name:h.name,icon:h.icon,color:h.color,createdAt:Date.now()}); } toast('Default houses added','success'); }
+  catch(e){ toast('Failed','error'); }
+};
+window.adminDeleteHouse = async function(id){
+  if(!S.isAdmin) return;
+  if(!confirm('Delete this house? Members\' house field will be cleared.')) return;
+  try{ await remove(ref(db,'houses/'+id)); toast('House deleted','success'); }
+  catch(e){ toast('Failed','error'); }
+};
+window.adminAwardHousePoints = async function(){
+  if(!S.isAdmin) return;
+  const houseId=document.getElementById('hpHouse').value;
+  const points=+document.getElementById('hpPoints').value;
+  const reason=document.getElementById('hpReason').value.trim()||'Manual award';
+  if(!houseId){ toast('Please select a house','error'); return; }
+  if(!points){ toast('Please enter points','error'); return; }
+  try{ await set(push(ref(db,'housePoints')),{houseId,points,reason,ts:Date.now()}); document.getElementById('hpPoints').value=''; document.getElementById('hpReason').value=''; toast('Points awarded!','success'); }
+  catch(e){ toast('Failed','error'); }
+};
+window.distributeEventHousePoints = async function(eventId){
+  if(!S.isAdmin) return;
+  const e=S.events[eventId]; if(!e) return;
+  if(e.housePointsDone && !confirm('Points for this event have already been given. Give them again? (this will double-count)')) return;
+  const regs=S.eventRegs[eventId]||{}; let n=0;
+  try{
+    for(const [uid,r] of Object.entries(regs)){
+      if(r.status==='waitlist') continue;
+      const u=S.usersAll[uid]; const house=u&&u.house; if(!house) continue;
+      const pts=AWARD_POINTS[r.award||'participant']||0; if(!pts) continue;
+      await set(push(ref(db,'housePoints')),{houseId:house,points:pts,reason:e.title+' — '+(AWARD_LABEL[r.award||'participant']||'Participant')+' ('+r.name+')',ts:Date.now()});
+      n++;
+    }
+    await update(ref(db,'events/'+eventId),{housePointsDone:true});
+    toast(n?('House points given to '+n+' members'):'No registered member has a house set — no points given','success');
+  }catch(err){ toast('Failed: '+(err.message||err.code),'error'); }
+};
+
+// ==================== SHAREABLE RESULT CARDS ====================
+const AWARD_FULL = { '1st':'1st Place', '2nd':'2nd Place', '3rd':'3rd Place', participant:'Participant' };
+let _resultLast=null;
+function drawRR(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function drawResultCard(canvas, d){
+  const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+  const win = d.award && d.award!=='participant';
+  const base = d.houseColor || (win?'#d42b2b':'#1a2d6b');
+  const g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,base); g.addColorStop(1,'#0e1636');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  [[140,180,'#f5a623'],[950,240,'#fff'],[300,880,'#1a9e5c'],[880,900,'#f5a623'],[520,120,'#fff'],[80,620,'#f5a623']].forEach(p=>{ctx.fillStyle=p[2];ctx.globalAlpha=.5;ctx.beginPath();ctx.arc(p[0],p[1],10,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1; ctx.textAlign='center';
+  ctx.font='150px serif'; ctx.textBaseline='middle'; ctx.fillText(win?'🏆':'🎉', W/2, 240); ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#f5a623'; ctx.font='900 96px Syne, sans-serif'; ctx.fillText(win?'I WON!':'I TOOK PART', W/2, 430);
+  ctx.fillStyle='#fff'; ctx.font='bold 46px Syne, sans-serif'; ctx.fillText((AWARD_FULL[d.award||'participant']||'Participant').toUpperCase(), W/2, 500);
+  let name=d.name||'', fs=64; ctx.font='bold '+fs+'px Georgia, serif';
+  while(ctx.measureText(name).width>W-160 && fs>28){ fs-=2; ctx.font='bold '+fs+'px Georgia, serif'; }
+  ctx.fillStyle='#fff'; ctx.fillText(name, W/2, 640);
+  let ev=d.event||'', efs=36; ctx.font=efs+'px "DM Sans", sans-serif';
+  while(ctx.measureText(ev).width>W-160 && efs>18){ efs-=1; ctx.font=efs+'px "DM Sans", sans-serif'; }
+  ctx.fillStyle='rgba(255,255,255,.85)'; ctx.fillText(ev, W/2, 700);
+  if(d.houseName){
+    ctx.font='bold 30px Syne, sans-serif'; const label=(d.houseIcon||'')+' '+d.houseName; const tw=ctx.measureText(label).width;
+    ctx.fillStyle='rgba(0,0,0,.28)'; drawRR(ctx,W/2-tw/2-24,762,tw+48,58,29); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.fillText(label, W/2, 800);
+  }
+  ctx.fillStyle='rgba(255,255,255,.9)'; ctx.font='bold 34px Syne, sans-serif'; ctx.fillText('</> WebCrafters Club', W/2, H-70);
+}
+async function openResultCard(eventId, forUid){
+  const e=S.events[eventId]; if(!e) return;
+  const uid=forUid||(S.user&&S.user.uid);
+  const reg=(S.eventRegs[eventId]||{})[uid]; if(!reg){ toast('Registration not found','error'); return; }
+  const hId=(S.usersAll[uid]||{}).house; const h=hId?S.houses[hId]:null;
+  const d={ name:reg.name, event:e.title, award:reg.award||'participant', houseName:h?h.name:'', houseIcon:h?h.icon:'', houseColor:h?h.color:'' };
+  _resultLast={name:reg.name,event:e.title};
+  document.getElementById('resultOverlay').classList.add('open');
+  try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e2){}
+  drawResultCard(document.getElementById('resultCanvas'), d);
+}
+window.openResultCard=openResultCard;
+window.closeResult=function(){ document.getElementById('resultOverlay').classList.remove('open'); };
+function resultFilename(){ const n=((_resultLast&&_resultLast.name)||'result').replace(/[^a-z0-9]+/gi,'_'); const e=((_resultLast&&_resultLast.event)||'event').replace(/[^a-z0-9]+/gi,'_'); return 'IWON_'+n+'_'+e+'.png'; }
+window.downloadResult=function(){ const c=document.getElementById('resultCanvas'); const a=document.createElement('a'); a.download=resultFilename(); a.href=c.toDataURL('image/png'); a.click(); };
+window.shareResult=async function(){
+  const c=document.getElementById('resultCanvas');
+  try{ const blob=await new Promise(res=>c.toBlob(res,'image/png')); const file=new File([blob],resultFilename(),{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'My Result'}); }
+    else{ downloadResult(); toast('Image downloaded — you can share it now','success'); }
+  }catch(e){ downloadResult(); }
+};
+
+// ==================== QR CHECK-IN ====================
+// QR generation (member) + camera scanner (admin). Libs loaded on-demand (CDN hiccup won't break site).
+let _qrlib=null;
+async function getQRLib(){ if(_qrlib) return _qrlib; const m=await import('https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm'); _qrlib=m.default||m; return _qrlib; }
+window.openQR = async function(eventId, forUid){
+  const uid=forUid||(S.user&&S.user.uid);
+  const e=S.events[eventId], reg=(S.eventRegs[eventId]||{})[uid];
+  if(!e||!reg){ toast('Registration not found','error'); return; }
+  document.getElementById('qrOverlay').classList.add('open');
+  const img=document.getElementById('qrImg'), st=document.getElementById('qrStatus'), info=document.getElementById('qrInfo');
+  img.style.display='none'; st.style.display='block'; st.textContent='Generating…'; info.innerHTML='';
+  try{
+    const QR=await getQRLib();
+    const url=await QR.toDataURL('WCCHK:'+eventId+':'+uid, {margin:1, width:480, color:{dark:'#16204a', light:'#ffffff'}});
+    img.src=url; img.style.display='block'; st.style.display='none';
+    info.innerHTML=`<div style="font-weight:800;font-size:16px">${esc(reg.name)}</div>
+      <div style="font-size:12px;color:var(--text3)">${esc(e.title)}</div>
+      <div style="font-family:var(--font-display);font-weight:800;color:var(--accent);margin-top:6px">${esc(reg.ticketId)}</div>
+      ${reg.checkedIn?'<div style="color:#1a9e5c;font-weight:700;margin-top:8px"><i class="fa-solid fa-circle-check"></i> Checked in</div>':'<div style="font-size:11px;color:var(--text3);margin-top:8px">Show this QR to an admin at the venue</div>'}`;
+  }catch(err){ st.textContent='Could not generate QR (internet?). Ticket ID: '+reg.ticketId; }
+};
+window.closeQR=function(){ document.getElementById('qrOverlay').classList.remove('open'); };
+
+let _jsqr=null,_scanStream=null,_scanRAF=null,_scanCanvas=null,_scanLast={code:'',ts:0};
+async function getJsQR(){ if(_jsqr) return _jsqr; const m=await import('https://cdn.jsdelivr.net/npm/jsqr@1.4.0/+esm'); _jsqr=m.default||m; return _jsqr; }
+window.openScanner = async function(){
+  if(!S.isAdmin){ toast('Admin only','error'); return; }
+  document.getElementById('scanOverlay').classList.add('open');
+  const st=document.getElementById('scanStatus'); st.textContent='Starting camera…';
+  document.getElementById('scanRecent').innerHTML='';
+  const video=document.getElementById('scanVideo');
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('Camera not supported');
+    _scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    video.srcObject=_scanStream; await video.play();
+    st.textContent='Hold the QR inside the frame…';
+    const jsQR=await getJsQR();
+    _scanCanvas=document.createElement('canvas');
+    const loop=()=>{
+      if(!_scanStream) return;
+      if(video.readyState===video.HAVE_ENOUGH_DATA && video.videoWidth){
+        _scanCanvas.width=video.videoWidth; _scanCanvas.height=video.videoHeight;
+        const cx=_scanCanvas.getContext('2d');
+        cx.drawImage(video,0,0,_scanCanvas.width,_scanCanvas.height);
+        const imgd=cx.getImageData(0,0,_scanCanvas.width,_scanCanvas.height);
+        const res=jsQR(imgd.data,imgd.width,imgd.height);
+        if(res && res.data) onScanResult(res.data);
+      }
+      _scanRAF=requestAnimationFrame(loop);
+    };
+    loop();
+  }catch(err){
+    st.innerHTML='Could not open camera: '+esc(err.message||err.name||'error')+'<br><span style="font-size:11px;color:var(--text3)">The camera only works on an HTTPS/hosted site (not on file://). Use the registrations list to check in manually.</span>';
+  }
+};
+function onScanResult(data){
+  const now=Date.now();
+  if(data===_scanLast.code && now-_scanLast.ts<3000) return;
+  _scanLast={code:data,ts:now};
+  const st=document.getElementById('scanStatus');
+  const m=/^WCCHK:([^:]+):(.+)$/.exec(data);
+  if(!m){ st.textContent='This is not a WebCrafters ticket QR.'; return; }
+  const eventId=m[1], uid=m[2];
+  const e=S.events[eventId], reg=(S.eventRegs[eventId]||{})[uid];
+  if(!e||!reg){ st.textContent='Registration not found (invalid/old QR).'; return; }
+  if(reg.checkedIn){ st.innerHTML='<span style="color:#b9780f;font-weight:700">Already checked in:</span> <b>'+esc(reg.name)+'</b>'; addScanRecent(reg.name,e.title,true); return; }
+  markCheckIn(eventId,uid,true).then(ok=>{
+    if(ok){ st.innerHTML='<span style="color:#1a9e5c;font-weight:700">✅ Checked in:</span> <b>'+esc(reg.name)+'</b> · '+esc(e.title); addScanRecent(reg.name,e.title,false); if(navigator.vibrate) navigator.vibrate(120); }
+  });
+}
+function addScanRecent(name,ev,dup){ const el=document.getElementById('scanRecent'); if(!el) return; const row=document.createElement('div'); row.className='hpts-log-row'; row.innerHTML='<span>'+esc(name)+' · '+esc(ev)+'</span><span style="font-weight:700;color:'+(dup?'#b9780f':'#1a9e5c')+'">'+(dup?'already':'✓ in')+'</span>'; el.prepend(row); }
+window.closeScanner=function(){
+  if(_scanRAF) cancelAnimationFrame(_scanRAF); _scanRAF=null;
+  if(_scanStream){ _scanStream.getTracks().forEach(t=>t.stop()); _scanStream=null; }
+  const v=document.getElementById('scanVideo'); if(v) v.srcObject=null;
+  document.getElementById('scanOverlay').classList.remove('open');
+};
+window.markCheckIn = async function(eventId, uid, val){
+  if(!S.isAdmin){ toast('Admin only','error'); return false; }
+  try{ await update(ref(db,'eventRegs/'+eventId+'/'+uid),{checkedIn:!!val, checkedInAt: val?Date.now():null}); toast(val?'Checked in ✓':'Check-in removed','success'); return true; }
+  catch(e){ toast('Check-in save failed','error'); return false; }
+};
+
+// ==================== ADMIN ANALYTICS DASHBOARD ====================
+function anTrunc(s,n){ s=String(s||''); return s.length>n? s.slice(0,n-1)+'…':s; }
+function anEmpty(msg){ return `<div style="text-align:center;color:var(--text3);font-size:13px;padding:30px 0">${esc(msg||'No data yet')}</div>`; }
+function weeklyCumulative(ts){
+  if(!ts.length) return [];
+  const WEEK=7*864e5, start=ts[0], end=ts[ts.length-1];
+  const out=[]; let cum=0, i=0;
+  for(let t=start; t<=end+WEEK; t+=WEEK){
+    while(i<ts.length && ts[i] < t+WEEK){ cum++; i++; }
+    out.push({label:new Date(t).toLocaleDateString([], {month:'short',day:'numeric'}), value:cum});
+    if(out.length>=16) break;
+  }
+  return out;
+}
+function svgBarsH(items, color){
+  items=(items||[]).filter(it=>it);
+  if(!items.length || items.every(it=>!it.value)) return anEmpty();
+  const max=Math.max(...items.map(i=>i.value),1);
+  const rowH=34, pad=8, w=520, labelW=140, barMax=w-labelW-70;
+  const h=items.length*rowH+pad*2;
+  let y=pad, s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" preserveAspectRatio="xMinYMin meet">`;
+  items.forEach(it=>{
+    const bw=Math.max(2, Math.round(it.value/max*barMax));
+    const c=it.color||color;
+    s+=`<text x="0" y="${y+rowH/2+4}" font-size="12" fill="#5a6280">${esc(anTrunc(it.label,20))}</text>`;
+    s+=`<rect x="${labelW}" y="${y+7}" width="${bw}" height="${rowH-16}" rx="4" fill="${c}"><title>${esc(it.label)}: ${it.value}</title></rect>`;
+    s+=`<text x="${labelW+bw+6}" y="${y+rowH/2+4}" font-size="12" font-weight="700" fill="#16204a">${it.value}</text>`;
+    y+=rowH;
+  });
+  return s+'</svg>';
+}
+function svgArea(points, color){
+  points=points||[];
+  if(points.length<2) return anEmpty('Not enough data yet');
+  const w=520,h=200,padL=30,padB=24,padT=12,padR=12;
+  const max=Math.max(...points.map(p=>p.value),1);
+  const iw=w-padL-padR, ih=h-padB-padT;
+  const X=i=>padL+(i/(points.length-1))*iw;
+  const Y=v=>padT+ih-(v/max)*ih;
+  let line='', area=`M ${X(0)} ${Y(0)} `;
+  points.forEach((p,i)=>{ line+=(i?'L':'M')+X(i)+' '+Y(p.value)+' '; area+='L '+X(i)+' '+Y(p.value)+' '; });
+  area+=`L ${X(points.length-1)} ${Y(0)} Z`;
+  let xl='';
+  [0,Math.floor((points.length-1)/2),points.length-1].forEach(i=>{ xl+=`<text x="${X(i)}" y="${h-6}" font-size="10" fill="#9aa0b8" text-anchor="middle">${esc(points[i].label)}</text>`; });
+  const dots=points.map((p,i)=>`<circle cx="${X(i)}" cy="${Y(p.value)}" r="3" fill="${color}"><title>${esc(p.label)}: ${p.value}</title></circle>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" preserveAspectRatio="xMinYMin meet">
+    <path d="${area}" fill="${color}22"/>
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
+    ${dots}
+    <text x="0" y="${Y(max)+4}" font-size="10" fill="#9aa0b8">${max}</text>
+    <text x="0" y="${Y(0)}" font-size="10" fill="#9aa0b8">0</text>
+    ${xl}
+  </svg>`;
+}
+async function computeAnalytics(){
+  let quizSubs={}, learn={};
+  try{ const s=await get(ref(db,'compQuizSubs')); quizSubs=s.val()||{}; }catch(e){}
+  try{ const s=await get(ref(db,'learnProgress')); learn=s.val()||{}; }catch(e){}
+  const users=Object.values(S.usersAll||{});
+  const events=eventsSorted();
+  let totalRegs=0, checkedIn=0, offlineRegs=0;
+  const evReg=events.map(e=>{ const rs=Object.values(S.eventRegs[e.id]||{}); totalRegs+=rs.length; checkedIn+=rs.filter(r=>r.checkedIn).length; if(e.mode==='offline') offlineRegs+=rs.length; return {label:e.title,value:rs.length}; }).sort((a,b)=>b.value-a.value);
+  const scores=Object.values(quizSubs).map(q=>+q.score||0);
+  const avgQuiz=scores.length? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+  const verified=users.filter(u=>u.verified).length;
+  const debateTeams=(S.debateReg && S.debateReg.teams)? Object.keys(S.debateReg.teams).length : 0;
+  const activity=[
+    {label:'Event Regs',value:totalRegs},
+    {label:'Quiz Attempts',value:scores.length},
+    {label:'Debate Teams',value:debateTeams},
+    {label:'CC Posts',value:(S.ccItems||[]).length},
+    {label:'Learners',value:Object.keys(learn).length}
+  ].sort((a,b)=>b.value-a.value);
+  const dated=users.map(u=>+u.createdAt||0).filter(Boolean).sort((a,b)=>a-b);
+  const totals=houseTotals();
+  const houseBars=Object.keys(S.houses).map(id=>({label:S.houses[id].name,value:totals[id]||0,color:S.houses[id].color})).sort((a,b)=>b.value-a.value);
+  return { members:users.length, verified, events:events.length, totalRegs, checkedIn, offlineRegs, quizCount:scores.length, avgQuiz, evReg, activity, growth:weeklyCumulative(dated), houseBars };
+}
+async function openAnalytics(){
+  if(!S.isAdmin){ toast('Admin only','error'); return; }
+  document.getElementById('analyticsOverlay').classList.add('open');
+  const body=document.getElementById('analyticsBody');
+  body.innerHTML='<div class="loading"><div class="spinner"></div> Crunching numbers...</div>';
+  const a=await computeAnalytics();
+  const NAVY='#1a2d6b', GREEN='#1a9e5c', GOLD='#f5a623';
+  const tile=(v,l,c)=>`<div class="an-tile"><div class="an-tval" style="color:${c}">${v}</div><div class="an-tlabel">${l}</div></div>`;
+  const verPct=a.members?Math.round(a.verified/a.members*100):0;
+  const ciPct=a.offlineRegs?Math.round(a.checkedIn/a.offlineRegs*100):0;
+  body.innerHTML=`
+    <div class="an-tiles">
+      ${tile(a.members,'Members',NAVY)}
+      ${tile(verPct+'%','Verified',GREEN)}
+      ${tile(a.events,'Events',GOLD)}
+      ${tile(a.totalRegs,'Registrations','#7b2ff7')}
+      ${tile(a.quizCount,'Quiz Attempts','#3457b2')}
+      ${tile(a.avgQuiz.toFixed(1),'Avg Quiz Score','#d42b2b')}
+    </div>
+    <div class="an-charts">
+      <div class="an-card"><div class="an-ctitle">Member Growth <span>(cumulative)</span></div>${svgArea(a.growth,NAVY)}</div>
+      <div class="an-card"><div class="an-ctitle">Top Events <span>by registrations</span></div>${svgBarsH(a.evReg.slice(0,8),NAVY)}</div>
+      <div class="an-card"><div class="an-ctitle">Activity Breakdown</div>${svgBarsH(a.activity,GREEN)}</div>
+      <div class="an-card"><div class="an-ctitle">House Points</div>${svgBarsH(a.houseBars,NAVY)}</div>
+    </div>
+    <div class="an-note">Offline check-in rate: <b>${ciPct}%</b> (${a.checkedIn}/${a.offlineRegs}) · Live data from Firebase.</div>
+  `;
+}
+window.openAnalytics=openAnalytics;
+window.closeAnalytics=function(){ document.getElementById('analyticsOverlay').classList.remove('open'); };
+
+// ==================== PWA · THEME · NOTIFICATIONS ====================
+function currentTheme(){ return document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light'; }
+function applyTheme(t){
+  if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+  else document.documentElement.removeAttribute('data-theme');
+  const ic=document.getElementById('themeIcon'); if(ic) ic.className = t==='dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+window.toggleTheme = function(){
+  const t = currentTheme()==='dark' ? 'light' : 'dark';
+  try{ localStorage.setItem('wc_theme', t); }catch(e){}
+  applyTheme(t);
+};
+applyTheme(currentTheme()); // sync icon with pre-paint theme
+
+// ---- PWA install ----
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); _deferredPrompt=e; const b=document.getElementById('installBtn'); if(b) b.style.display='flex'; });
+window.installApp = async function(){
+  if(!_deferredPrompt){ toast('The app is already installed or your browser doesn\'t support this','error'); return; }
+  _deferredPrompt.prompt();
+  try{ await _deferredPrompt.userChoice; }catch(e){}
+  _deferredPrompt=null; const b=document.getElementById('installBtn'); if(b) b.style.display='none';
+};
+window.addEventListener('appinstalled', ()=>{ const b=document.getElementById('installBtn'); if(b) b.style.display='none'; toast('App installed! 🎉','success'); });
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(err=>console.warn('SW register failed:', err && err.message)); });
+}
+
+// ---- notifications (local; fires while a device has the site open + permission granted) ----
+function notify(title, body){ try{ if(window.Notification && Notification.permission==='granted') new Notification(title,{body, icon:'icon.svg'}); }catch(e){} }
+function updateNotifBtn(){ const b=document.getElementById('notifBtn'); if(!b || !window.Notification) return; if(Notification.permission==='granted'){ b.innerHTML='<i class="fa-solid fa-bell"></i> Notifications on'; b.disabled=true; } else { b.innerHTML='<i class="fa-solid fa-bell"></i> Enable notifications'; b.disabled=false; } }
+window.requestNotifPerm = async function(){
+  if(!window.Notification){ toast('This browser doesn\'t support notifications','error'); return; }
+  try{ const p=await Notification.requestPermission(); if(p==='granted'){ toast('Notifications on! 🔔','success'); notify('WebCrafters Club','Notifications enabled ✓'); } else { toast('Permission denied','error'); } }
+  catch(e){ toast('Failed','error'); }
+  updateNotifBtn();
+};
+let _annInit=false,_lastAnnTs=0,_qzInit=false,_lastQzLive=false;
+onValue(ref(db,'announcement'), snap=>{
+  const d=snap.val();
+  if(!_annInit){ _annInit=true; _lastAnnTs=(d&&d.ts)||0; return; }
+  if(d && d.text && (d.ts||0)>_lastAnnTs){ _lastAnnTs=d.ts; notify('📢 New Announcement', d.text); }
+});
+onValue(ref(db,'compQuiz'), snap=>{
+  const q=snap.val(), live=!!(q&&q.status==='live');
+  if(!_qzInit){ _qzInit=true; _lastQzLive=live; return; }
+  if(live && !_lastQzLive) notify('🧠 Quiz Live!', ((q&&q.title)||'Quiz')+' just went live — join it from Activities!');
+  _lastQzLive=live;
+});
+
+// ==================== GLOBAL SEARCH ====================
+window.openSearch=function(){ document.getElementById('searchOverlay').classList.add('open'); const i=document.getElementById('searchInput'); i.value=''; runSearch(''); setTimeout(()=>i.focus(),50); };
+window.closeSearch=function(){ document.getElementById('searchOverlay').classList.remove('open'); };
+window.runSearch=function(q){
+  q=(q||'').trim().toLowerCase();
+  const el=document.getElementById('searchResults'); if(!el) return;
+  if(!q){ el.innerHTML='<div class="sr-empty">Search events, houses and members…</div>'; return; }
+  const ev=eventsSorted().filter(e=>(e.title||'').toLowerCase().includes(q)||(e.type||'').toLowerCase().includes(q)).slice(0,6);
+  const totals=houseTotals();
+  const hs=Object.keys(S.houses).map(id=>({id,...S.houses[id],pts:totals[id]||0})).filter(h=>(h.name||'').toLowerCase().includes(q)).slice(0,6);
+  const mem=(S.members||[]).filter(m=>(m.name||'').toLowerCase().includes(q)).slice(0,8);
+  let html='';
+  if(ev.length) html+='<div class="sr-group">Events</div>'+ev.map(e=>`<div class="sr-item" onclick="searchGo('event','${e.id}')"><div class="sr-ic" style="background:#1a2d6b"><i class="fa-solid fa-calendar-star"></i></div><div class="sr-main"><div class="sr-title">${esc(e.title)}</div><div class="sr-sub">${esc(e.type||'Event')} · ${fmtDT(e.dateTime)}</div></div></div>`).join('');
+  if(hs.length) html+='<div class="sr-group">Houses</div>'+hs.map(h=>`<div class="sr-item" onclick="searchGo('house')"><div class="sr-ic" style="background:${esc(h.color||'#1a2d6b')}">${esc(h.icon||'🏠')}</div><div class="sr-main"><div class="sr-title">${esc(h.name)}</div><div class="sr-sub">${h.pts} pts</div></div></div>`).join('');
+  if(mem.length) html+='<div class="sr-group">Members</div>'+mem.map(m=>`<div class="sr-item" onclick="searchGo('members')"><div class="sr-ic" style="background:${getColor(m.name)}">${initials(m.name)}</div><div class="sr-main"><div class="sr-title">${esc(m.name)}</div><div class="sr-sub">${m.score||0} pts${m.class?(' · '+esc(m.class)):''}</div></div></div>`).join('');
+  el.innerHTML = html || '<div class="sr-empty">Nothing found.</div>';
+};
+window.searchGo=function(type,id){
+  closeSearch();
+  if(type==='event' && id) location.hash='#event/'+id;
+  else if(type==='house') showPage('houses');
+  else if(type==='members') showPage('members');
+};
+window.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && (e.key==='k'||e.key==='K')){ e.preventDefault(); openSearch(); }
+  else if(e.key==='Escape'){ const so=document.getElementById('searchOverlay'); if(so&&so.classList.contains('open')) closeSearch(); }
+});
+
 window.toggleAdmin = function(){
   adminOpen = !adminOpen;
   document.getElementById('adminOverlay').classList.toggle('open', adminOpen);
@@ -1616,10 +3327,10 @@ function showCSVPreview(data){
   if(!data.length){toast('No data found in CSV','error');return;}
   document.getElementById('csvPreview').style.display='block';
   document.getElementById('csvImportBtn').style.display='block';
-  document.getElementById('csvPreviewText').textContent = data.length + ' members milenge — preview:';
+  document.getElementById('csvPreviewText').textContent = data.length + ' members will be imported — preview:';
   document.getElementById('csvPreviewList').innerHTML = data.slice(0,5).map(m=>
     '<div style="padding:3px 0;border-bottom:1px solid var(--border)">'+m.name+' — '+m.score+' pts</div>'
-  ).join('') + (data.length>5 ? '<div style="color:var(--text3);padding-top:4px">...aur '+(data.length-5)+' more</div>' : '');
+  ).join('') + (data.length>5 ? '<div style="color:var(--text3);padding-top:4px">...and '+(data.length-5)+' more</div>' : '');
 }
 
 window.csvImport = async function(){
@@ -1835,22 +3546,37 @@ function renderQzParticipant(){
       ${S.qz && S.qz.title ? `Waiting for admin to start <b>${escapeHtml(S.qz.title)}</b> — ${escapeHtml(S.qz.club||'')}` : 'No quiz is live right now. Check back soon!'}</div>`;
     return;
   }
-  const name = sessionStorage.getItem('qzName');
-  if(!name){
+  const joined = sessionStorage.getItem('qzName');
+  if(!joined){
+    const gid = window.identityName ? identityName() : null;
+    const verified = S.user && S.user.verified;
+    let idBlock, btn;
+    if(!S.user){
+      idBlock = `<div style="margin:6px 0 14px;font-size:13px;color:var(--text2)">You need to log in with a verified email to join the quiz.</div>`;
+      btn = `<button class="btn btn-primary btn-full" onclick="openAuth()"><i class="fa-solid fa-right-to-bracket"></i> Login to Join</button>`;
+    }else if(!verified){
+      idBlock = `<div style="margin:6px 0 6px;font-weight:700"><i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> ${escapeHtml(gid||S.user.email)}</div>
+        <div style="font-size:12px;color:var(--accent3);margin-bottom:12px"><i class="fa-solid fa-triangle-exclamation"></i> Email not verified</div>`;
+      btn = `<button class="btn btn-primary btn-full" onclick="startVerify()"><i class="fa-solid fa-envelope-circle-check"></i> Verify Email to Join</button>`;
+    }else{
+      idBlock = `<div style="margin:6px 0 14px;font-weight:700"><i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> ${escapeHtml(gid)}</div>`;
+      btn = `<button class="btn btn-primary btn-full" onclick="qzJoin()">Join Quiz</button>`;
+    }
     root.innerHTML = `<div class="qz-join">
       <i class="fa-solid fa-brain" style="font-size:36px;color:var(--accent2);margin-bottom:10px;display:block"></i>
       <div style="font-weight:700;margin-bottom:4px">${escapeHtml(S.qz.title)}</div>
       <div style="font-size:12px;color:var(--text3);margin-bottom:14px">${escapeHtml(S.qz.club||'')} · ${(S.qz.questions||[]).length} Questions · ${Math.round(S.qz.durationSec/60)} min · No tab switching!</div>
-      <input class="a-input" id="qzNameInput" placeholder="Enter your full name"/>
-      <button class="btn btn-primary btn-full" onclick="qzJoin()">Join Quiz</button>
+      ${idBlock}
+      ${btn}
     </div>`;
     return;
   }
   renderQzTaking();
 }
 window.qzJoin = function(){
-  const v = document.getElementById('qzNameInput').value.trim();
-  if(!v){toast('Enter your name','error');return;}
+  if(!requireVerified()) return;
+  const v = identityName();
+  if(!v){toast('Set your name in your profile','error'); openAuth(); return;}
   sessionStorage.setItem('qzName', v);
   S.qzAnswers = {};
   S.qzViolations = 0;
@@ -2145,12 +3871,15 @@ function renderDbRegForm(){
   </div>`;
 }
 window.dbRegSubmit = function(){
+  if(!requireVerified()) return;
   const name = document.getElementById('regTeamName').value.trim();
   const membersStr = document.getElementById('regMembers').value.trim();
   if(!name || !membersStr){toast('Enter team name & members','error');return;}
   const members = membersStr.split(',').map(m=>m.trim()).filter(Boolean);
   const newRef = push(ref(db,'debateReg/teams'));
-  set(newRef,{name,members,registeredAt:Date.now()});
+  const rec = {name,members,registeredAt:Date.now()};
+  if(S.user){ rec.registeredBy = S.user.uid; rec.registeredByName = S.user.name; }
+  set(newRef,rec);
   localStorage.setItem('wc_regDone','1');
   toast('Team registered! Admin will include you in the battles.','success');
   renderDbParticipant();
@@ -2162,12 +3891,18 @@ onValue(ref(db,'debateReg'), snap=>{
 });
 
 /* ---------------- DEBATE: PARTICIPANT ---------------- */
+// Global identity first, then guest fallback
+function debaterName(){ return (window.identityName && identityName()) || localStorage.getItem('wc_debaterName'); }
 function renderDebaterIdBar(){
+  const gid = window.identityName ? identityName() : null;
+  if(gid){
+    return `<div class="learner-id-bar"><i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> You are <b>${escapeHtml(gid)}</b> <span style="font-size:11px;color:var(--text3)">· logged in</span></div>`;
+  }
   const name = localStorage.getItem('wc_debaterName');
   if(!name){
     return `<div class="learner-id-bar">
       <i class="fa-solid fa-user" style="color:var(--text3)"></i>
-      <input type="text" id="debaterNameInput" placeholder="Enter your name (so you can Skip Your Turn if needed)"/>
+      <input type="text" id="debaterNameInput" placeholder="Enter your name — or Login (top right) for one identity"/>
       <button class="btn btn-primary btn-sm" onclick="setDebaterName()">Save</button>
     </div>`;
   }
@@ -2187,7 +3922,7 @@ window.changeDebaterName = function(){
 function renderDbParticipant(){
   const root = document.getElementById('dbRoot');
   if(!root) return;
-  const myName = localStorage.getItem('wc_debaterName');
+  const myName = debaterName();
   let html = `<div style="font-weight:700;font-size:18px;margin-bottom:14px">${escapeHtml(S.debate?.title||'Debate')}</div>`;
   html += renderDbRegForm();
   html += renderDebaterIdBar();
@@ -2598,7 +4333,7 @@ const TRACKS = {
         level: "beginner",
         theory: "HTML = HyperText Markup Language = the SKELETON of every webpage! Every element uses tags: <code>&lt;tagname&gt;content&lt;/tagname&gt;</code><br/><br/>Every HTML page needs:<br/>\u2022 <code>&lt;!DOCTYPE html&gt;</code> - I am HTML5!<br/>\u2022 <code>&lt;html&gt;</code> - root element<br/>\u2022 <code>&lt;head&gt;</code> - page info (invisible)<br/>\u2022 <code>&lt;body&gt;</code> - everything visible<br/><br/>HTML = structure, CSS = style, JS = brain!",
         startCode: {
-          html: "<!DOCTYPE html>\n<html>\n  <head>\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Namaste Duniya! \ud83d\ude4f</h1>\n    <p>Main ek web developer banunga!</p>\n  </body>\n</html>",
+          html: "<!DOCTYPE html>\n<html>\n  <head>\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Hello, World! \ud83d\udc4b</h1>\n    <p>I'm going to be a web developer!</p>\n  </body>\n</html>",
           css: "",
           js: ""
         },
@@ -3065,7 +4800,7 @@ const TRACKS = {
         startCode: {
           html: "<div id=\"out\"></div>",
           css: "body{font-family:sans-serif;padding:24px;background:#070b14;color:#e2e8f0}#out{background:#1a2235;padding:16px;border-radius:8px;line-height:2.2;font-size:14px}",
-          js: "function greet(name=\"WebCrafter\"){return `Namaste, ${name}!`;}\nconst getScore=function(tasks,bonus=0){return tasks*10+bonus;};\nconst getLevel=score=>{if(score>=80)return \"Expert\";if(score>=50)return \"Intermediate\";return \"Beginner\";};\nconst double=n=>n*2;\nconst total=(...scores)=>scores.reduce((s,n)=>s+n,0);\nconst score=getScore(5,20);\ndocument.getElementById(\"out\").innerHTML=[greet(),greet(\"Deepanshu\"),\"Score: \"+score+\" \u2192 \"+getLevel(score),\"double(7) = \"+double(7),\"total(10,25,15) = \"+total(10,25,15)].map(t=>`<div>${t}</div>`).join(\"\");"
+          js: "function greet(name=\"WebCrafter\"){return `Hello, ${name}!`;}\nconst getScore=function(tasks,bonus=0){return tasks*10+bonus;};\nconst getLevel=score=>{if(score>=80)return \"Expert\";if(score>=50)return \"Intermediate\";return \"Beginner\";};\nconst double=n=>n*2;\nconst total=(...scores)=>scores.reduce((s,n)=>s+n,0);\nconst score=getScore(5,20);\ndocument.getElementById(\"out\").innerHTML=[greet(),greet(\"Deepanshu\"),\"Score: \"+score+\" \u2192 \"+getLevel(score),\"double(7) = \"+double(7),\"total(10,25,15) = \"+total(10,25,15)].map(t=>`<div>${t}</div>`).join(\"\");"
         },
         task: "Write getAverage(...scores) that returns average of any number of scores!"
       },
@@ -3444,16 +5179,23 @@ function learnerKey(name){ return name.trim().toLowerCase().replace(/[^a-z0-9]+/
 function renderLearnerIdBar(){
   const el = document.getElementById('learnerIdBar');
   if(!el) return;
+  const gid = window.identityName ? identityName() : null;
+  if(gid){
+    el.innerHTML = `<i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> Learning as <b>${escapeHtml(gid)}</b> <span style="font-size:11px;color:var(--text3)">· logged in</span>`;
+    return;
+  }
   const name = localStorage.getItem('wc_learnerName');
   if(!name){
     el.innerHTML = `<i class="fa-solid fa-user" style="color:var(--text3)"></i>
-      <input type="text" id="learnerNameInput" placeholder="Enter your name to save progress & badges"/>
+      <input type="text" id="learnerNameInput" placeholder="Enter your name — or Login (top right) to save everywhere"/>
       <button class="btn btn-primary btn-sm" onclick="setLearnerName()">Save</button>`;
   } else {
     el.innerHTML = `<i class="fa-solid fa-user-check" style="color:#1a9e5c"></i> Learning as <b>${escapeHtml(name)}</b>
       <button class="lid-change" onclick="changeLearnerName()">change</button>`;
   }
 }
+// Global identity first, then guest fallback
+function learnerName(){ return (window.identityName && identityName()) || localStorage.getItem('wc_learnerName'); }
 window.setLearnerName = function(){
   const v = document.getElementById('learnerNameInput').value.trim();
   if(!v){toast('Enter your name first','error');return;}
@@ -3467,7 +5209,7 @@ window.changeLearnerName = function(){
   renderLearnerIdBar();
 }
 function pushLearnProgress(){
-  const name = localStorage.getItem('wc_learnerName');
+  const name = learnerName();
   if(!name) return;
   const prog = getLMSProgress();
   const totalChapters = Object.values(TRACKS).reduce((s,t)=>s+t.chapters.length,0);
@@ -3499,6 +5241,339 @@ window.initLearn = function(){
   renderLearnerIdBar();
   pushLearnProgress();
 }
+
+/* =========================================================================
+   MEMBER FEATURES: referrals, attendance/streak badges, calendar,
+   event push-reminders, and the "My Journey" personal dashboard.
+   All of this reuses the existing state (S), Firebase refs and helpers.
+   ========================================================================= */
+const REFERRAL_POINTS = 10;
+
+function myUid(){ return S.user && S.user.uid; }
+// Rank of the logged-in member on the points leaderboard (matched by name).
+function myMemberRank(){
+  if(!S.user || !S.user.name) return null;
+  const nm = S.user.name.trim().toLowerCase();
+  const i = (S.members||[]).findIndex(m => (m.name||'').trim().toLowerCase() === nm);
+  return i < 0 ? null : { rank:i+1, of:S.members.length, score:S.members[i].score||0 };
+}
+
+// Grant a badge once (stored at users/{uid}/badges/{id}). Returns true if newly awarded.
+async function awardBadge(uid, badge){
+  if(!uid || !badge || !badge.id) return false;
+  const path = 'users/'+uid+'/badges/'+badge.id;
+  try{
+    const snap = await get(ref(db, path));
+    if(snap.exists()) return false;
+    await set(ref(db, path), { label:badge.label, icon:badge.icon, ts:Date.now() });
+    return true;
+  }catch(e){ console.warn('awardBadge failed', e && e.message); return false; }
+}
+
+/* ---------------- REFERRAL SYSTEM ---------------- */
+// Capture an incoming invite (#ref/<code> or ?ref=<code>) before signup.
+(function captureRef(){
+  try{
+    let code = null;
+    const m = /#ref\/([A-Za-z0-9_-]+)/.exec(location.hash || '');
+    if(m) code = m[1];
+    if(!code){ const q = new URLSearchParams(location.search); if(q.get('ref')) code = q.get('ref'); }
+    if(code){
+      localStorage.setItem('wc_pendingRef', code);
+      if(m){ history.replaceState(null, '', location.pathname + location.search); } // clear so #event routing still works
+    }
+  }catch(e){}
+})();
+
+function myInviteLink(){
+  const base = location.origin + location.pathname;
+  return myUid() ? (base + '#ref/' + myUid()) : base;
+}
+
+// Reward both sides once a referred member signs up.
+async function applyReferral(newUid){
+  let refUid = null;
+  try{ refUid = localStorage.getItem('wc_pendingRef'); }catch(e){}
+  try{ localStorage.removeItem('wc_pendingRef'); }catch(e){}
+  if(!refUid || refUid === newUid) return;
+  try{
+    const already = await get(ref(db, 'users/'+newUid+'/referredBy'));
+    if(already.exists()) return;
+    const refSnap = await get(ref(db, 'users/'+refUid));
+    if(!refSnap.exists()) return; // invalid / unknown invite code
+    const refUser = refSnap.val() || {};
+    const newName = (S.user && S.user.name) || 'a new member';
+    await update(ref(db, 'users/'+newUid), { referredBy:refUid });
+    await set(ref(db, 'referrals/'+refUid+'/'+newUid), { ts:Date.now(), name:newName });
+    await awardBadge(refUid, { id:'recruiter', label:'Recruiter', icon:'🤝' });
+    await awardBadge(newUid, { id:'invited',   label:'Invited',   icon:'🎟️' });
+    // House points for the inviter (if they belong to a house).
+    if(refUser.house){
+      await set(push(ref(db, 'housePoints')), { houseId:refUser.house, points:REFERRAL_POINTS, reason:'Referral bonus — invited '+newName, ts:Date.now() });
+    }
+    toast('Referral applied! You and your inviter both earned a badge 🎉', 'success');
+  }catch(e){ console.warn('applyReferral failed', e && e.message); }
+}
+window.applyReferral = applyReferral;
+
+window.copyInviteLink = function(){
+  const link = myInviteLink();
+  const done = ()=>toast('Invite link copied!', 'success');
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(done).catch(()=>{ prompt('Copy your invite link:', link); }); }
+  else{ const i=document.getElementById('jrInviteInput'); if(i){ i.select(); try{ document.execCommand('copy'); done(); }catch(e){ prompt('Copy your invite link:', link); } } }
+};
+window.shareInviteLink = async function(){
+  const link = myInviteLink();
+  const text = 'Join me on WebCrafters Club! Sign up with my invite and we both earn rewards: ' + link;
+  try{
+    if(navigator.share){ await navigator.share({ title:'WebCrafters Club', text:'Join me on WebCrafters Club!', url:link }); }
+    else{ window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); }
+  }catch(e){}
+};
+
+/* ---------------- ATTENDANCE + STREAK BADGES ---------------- */
+// Gather the logged-in member's event history from registrations.
+function myEventHistory(){
+  const uid = myUid();
+  const rows = [];
+  if(uid){
+    for(const [eid, regs] of Object.entries(S.eventRegs || {})){
+      const r = regs && regs[uid];
+      if(!r) continue;
+      const e = (S.events && S.events[eid]) || {};
+      rows.push({ eid, title:e.title || 'Event', dateTime:e.dateTime || '', mode:e.mode,
+                  checkedIn:!!r.checkedIn, status:r.status || 'registered', award:r.award || 'participant' });
+    }
+  }
+  rows.sort((a,b)=>(a.dateTime||'').localeCompare(b.dateTime||''));
+  return rows;
+}
+function myAttendanceStats(){
+  const rows = myEventHistory();
+  const attended = rows.filter(r=>r.checkedIn).length;
+  let streak = 0, run = 0;
+  for(const r of rows){ if(r.checkedIn){ run++; streak = Math.max(streak, run); } else run = 0; }
+  return { attended, registered:rows.length, streak, rows };
+}
+// Automatically grant attendance / streak badges as thresholds are crossed.
+async function syncAttendanceBadges(){
+  const uid = myUid();
+  if(!uid) return;
+  const { attended, streak } = myAttendanceStats();
+  const want = [];
+  if(attended >= 1) want.push({ id:'attend-1', label:'First Attendance', icon:'🎯' });
+  if(attended >= 3) want.push({ id:'attend-3', label:'Regular',          icon:'🔥' });
+  if(attended >= 5) want.push({ id:'attend-5', label:'Dedicated',        icon:'🏅' });
+  if(streak   >= 3) want.push({ id:'streak-3', label:'On a Streak',      icon:'⚡' });
+  for(const b of want){
+    const isNew = await awardBadge(uid, b);
+    if(isNew){ toast('Badge earned: '+b.icon+' '+b.label, 'success'); notify('🏅 New badge unlocked!', b.label+' — keep it going!'); }
+  }
+}
+let _badgeSyncTimer = null;
+function scheduleBadgeSync(){ clearTimeout(_badgeSyncTimer); _badgeSyncTimer = setTimeout(()=>{ syncAttendanceBadges(); if(document.getElementById('page-journey').classList.contains('active')) renderJourney(); }, 800); }
+// Re-check whenever attendance data or the signed-in user changes.
+onValue(ref(db,'eventRegs'), scheduleBadgeSync);
+
+/* ---------------- LIVE EVENT CALENDAR ---------------- */
+window.openCalendar = function(){ renderCalendar(); document.getElementById('calendarOverlay').classList.add('open'); };
+window.closeCalendar = function(){ document.getElementById('calendarOverlay').classList.remove('open'); };
+function calDayParts(s){
+  if(!s) return { d:'?', m:'TBA' };
+  const dt = new Date(s); if(isNaN(dt)) return { d:'?', m:'TBA' };
+  return { d:String(dt.getDate()), m:dt.toLocaleString([], {month:'short'}) };
+}
+function timeLeftLabel(ms){
+  if(ms <= 0) return null;
+  const h = Math.floor(ms/3600000), d = Math.floor(h/24);
+  if(d >= 1) return d + (d===1?' day':' days') + ' left';
+  if(h >= 1) return h + (h===1?' hr':' hrs') + ' left';
+  return Math.max(1, Math.floor(ms/60000)) + ' min left';
+}
+function renderCalendar(){
+  const body = document.getElementById('calendarBody'); if(!body) return;
+  const list = eventsSorted();
+  if(!list.length){ body.innerHTML = '<div class="cal-empty"><i class="fa-solid fa-calendar-xmark" style="font-size:32px;display:block;margin-bottom:10px;opacity:.3"></i>No events scheduled yet.</div>'; return; }
+  const now = Date.now();
+  const upcoming = [], past = [];
+  list.forEach(e=>{ const t = e.dateTime ? new Date(e.dateTime).getTime() : Infinity; (isFinite(t) && t < now ? past : upcoming).push(e); });
+  const itemHTML = e=>{
+    const st = eventStatus(e, e.id);
+    const parts = calDayParts(e.dateTime);
+    const mine = S.user && myReg(e.id);
+    const dlLeft = e.regDeadline ? timeLeftLabel(new Date(e.regDeadline).getTime() - now) : null;
+    const closingSoon = dlLeft && regOpen(e) && (new Date(e.regDeadline).getTime() - now) < 48*3600000;
+    return `<div class="cal-item">
+      <div class="cal-date"><div class="d">${parts.d}</div><div class="m">${esc(parts.m)}</div></div>
+      <div class="cal-main">
+        <div class="cal-name" onclick="closeCalendar();location.hash='#event/${e.id}'">${esc(e.title)}</div>
+        <div class="cal-meta">
+          <span><i class="fa-solid fa-clock"></i> ${fmtDT(e.dateTime)}</span>
+          <span><i class="fa-solid fa-${e.mode==='online'?'video':'location-dot'}"></i> ${e.mode==='online'?'Online':'Offline'}</span>
+          ${e.regDeadline?`<span><i class="fa-solid fa-hourglass-end"></i> Reg by ${fmtDT(e.regDeadline)}</span>`:''}
+        </div>
+        <div class="cal-tags">
+          <span class="cal-tag ${st.cls}">${st.txt}</span>
+          ${mine?`<span class="cal-tag mine"><i class="fa-solid fa-ticket"></i> ${mine.status==='waitlist'?'Waitlisted':'Registered'}</span>`:''}
+          ${closingSoon?`<span class="cal-tag soon">⏳ ${esc(dlLeft)}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  };
+  let html = '';
+  if(upcoming.length) html += '<div class="cal-group">Upcoming</div>' + upcoming.map(itemHTML).join('');
+  if(past.length)     html += '<div class="cal-group">Past</div>' + past.map(itemHTML).join('');
+  body.innerHTML = html;
+}
+
+/* ---------------- PUSH NOTIFICATIONS: event reminders ---------------- */
+function _getNotified(){ try{ return JSON.parse(localStorage.getItem('wc_notified') || '{}'); }catch(e){ return {}; } }
+function _markNotified(k){ try{ const o=_getNotified(); o[k]=Date.now(); localStorage.setItem('wc_notified', JSON.stringify(o)); }catch(e){} }
+function checkEventReminders(){
+  if(!(window.Notification && Notification.permission === 'granted')) return;
+  const now = Date.now(), done = _getNotified();
+  for(const [id, e] of Object.entries(S.events || {})){
+    if(!e) continue;
+    // Registration deadline within 24h (for people who haven't registered yet).
+    if(e.regDeadline){
+      const diff = new Date(e.regDeadline).getTime() - now;
+      const k = 'dl:'+id;
+      if(diff > 0 && diff < 24*3600000 && !done[k] && !(S.user && myReg(id))){
+        notify('⏳ Registration closing soon', (e.title||'An event') + ' — register before ' + fmtDT(e.regDeadline));
+        _markNotified(k);
+      }
+    }
+    // Event starting within 60 min (for registered members).
+    if(e.dateTime){
+      const diff = new Date(e.dateTime).getTime() - now;
+      const k = 'start:'+id;
+      if(diff > 0 && diff < 60*60000 && !done[k] && S.user && myReg(id)){
+        notify('🚀 Event starting soon', (e.title||'Your event') + ' starts ' + fmtDT(e.dateTime));
+        _markNotified(k);
+      }
+    }
+  }
+}
+setInterval(checkEventReminders, 60000);
+setTimeout(checkEventReminders, 5000);
+// Notify when a brand-new event is published.
+let _evNotifInit = false; const _evNotifSeen = new Set();
+onValue(ref(db,'events'), snap=>{
+  const ev = snap.val() || {};
+  if(!_evNotifInit){ _evNotifInit = true; Object.keys(ev).forEach(k=>_evNotifSeen.add(k)); return; }
+  for(const id of Object.keys(ev)){
+    if(!_evNotifSeen.has(id)){ _evNotifSeen.add(id); notify('🎉 New event: ' + (ev[id].title || 'Event'), 'Open the Events page to register.'); }
+  }
+});
+
+/* ---------------- MY JOURNEY DASHBOARD ---------------- */
+window.renderJourney = async function(){
+  const body = document.getElementById('journeyBody'); if(!body) return;
+  if(!S.user){
+    body.innerHTML = `<div class="jr-guest">
+      <i class="fa-solid fa-route" style="font-size:40px;opacity:.3;display:block;margin-bottom:14px"></i>
+      <div style="font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px">Your journey starts here</div>
+      <div style="margin-bottom:16px">Log in to see your events, house, badges, rank and learning progress in one place.</div>
+      <button class="btn btn-primary" onclick="openAuth()"><i class="fa-solid fa-right-to-bracket"></i> Login / Create account</button>
+    </div>`;
+    return;
+  }
+  const u = S.user;
+  // Badges (referral + attendance, stored on the user) merged with learning badges.
+  let userBadges = [];
+  try{ const bs = await get(ref(db,'users/'+u.uid+'/badges')); if(bs.exists()) userBadges = Object.values(bs.val()||{}); }catch(e){}
+  const lp = (S.learnProgress || {})[learnerKey(u.name || '')] || null;
+  const learnBadges = (lp && lp.badges) ? lp.badges : [];
+  const allBadges = [...userBadges, ...learnBadges];
+  // Referral count.
+  let refCount = 0;
+  try{ const rs = await get(ref(db,'referrals/'+u.uid)); if(rs.exists()) refCount = Object.keys(rs.val()||{}).length; }catch(e){}
+
+  const stats = myAttendanceStats();
+  const rankInfo = myMemberRank();
+  const hId = myHouseId(); const house = hId ? S.houses[hId] : null;
+  const now = Date.now();
+  const upcoming = stats.rows.filter(r=>r.dateTime && new Date(r.dateTime).getTime() >= now);
+  const pastRows = stats.rows.filter(r=>!(r.dateTime && new Date(r.dateTime).getTime() >= now));
+  const lpPct = lp && lp.totalChapters ? Math.round((lp.completedCount/lp.totalChapters)*100) : 0;
+
+  const evRowHTML = r=>{
+    const win = r.award && r.award !== 'participant';
+    const dot = r.checkedIn ? 'var(--green)' : (r.status==='waitlist' ? 'var(--amber)' : 'var(--text3)');
+    const pill = r.checkedIn
+      ? '<span class="jr-pill" style="background:rgba(26,158,92,.15);color:var(--green)">Attended</span>'
+      : (r.status==='waitlist' ? '<span class="jr-pill" style="background:rgba(245,166,35,.18);color:#b9780f">Waitlist</span>'
+                               : '<span class="jr-pill" style="background:rgba(26,45,107,.12);color:var(--accent)">Registered</span>');
+    const shareBtn = (win || r.checkedIn)
+      ? `<button class="btn btn-ghost btn-sm" title="Share result card" onclick="openResultCard('${r.eid}')"><i class="fa-solid fa-trophy"></i></button>` : '';
+    return `<div class="jr-ev-row">
+      <span class="jr-ev-dot" style="background:${dot}"></span>
+      <div class="jr-ev-main"><b>${esc(r.title)}</b>${win?' <span title="Winner">🏆</span>':''}<div class="jr-ev-meta">${fmtDT(r.dateTime)}</div></div>
+      ${pill}${shareBtn}
+    </div>`;
+  };
+
+  body.innerHTML = `
+    <div class="jr-hero">
+      <div class="jr-hero-av">${initials(u.name||'?')}</div>
+      <div style="flex:1;min-width:0">
+        <div class="jr-hero-name">${esc(u.name||'Member')}</div>
+        <div class="jr-hero-sub">${esc(u.class||'')}${u.class?' · ':''}${esc(u.email||'')}${house?' · '+esc((house.icon||'')+' '+house.name):''}</div>
+      </div>
+      ${u.verified?'<span class="jr-pill" style="background:rgba(255,255,255,.25);color:#fff"><i class="fa-solid fa-circle-check"></i> Verified</span>':'<span class="jr-pill" style="background:rgba(255,255,255,.25);color:#fff">Unverified</span>'}
+    </div>
+
+    <div class="jr-stats">
+      <div class="jr-stat"><b>${rankInfo?('#'+rankInfo.rank):'—'}</b><span>Leaderboard rank</span></div>
+      <div class="jr-stat"><b>${rankInfo?rankInfo.score:0}</b><span>Points</span></div>
+      <div class="jr-stat"><b>${stats.attended}</b><span>Events attended</span></div>
+      <div class="jr-stat"><b>${stats.streak}</b><span>Best streak</span></div>
+      <div class="jr-stat"><b>${allBadges.length}</b><span>Badges</span></div>
+      <div class="jr-stat"><b>${refCount}</b><span>Referrals</span></div>
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-medal"></i> Badges</div>
+      ${allBadges.length ? `<div class="jr-badges">${allBadges.map(b=>`<div class="jr-badge"><span class="bi">${esc(b.icon||'🏅')}</span><span class="bl">${esc(b.label||'Badge')}</span></div>`).join('')}</div>`
+                         : '<div class="jr-empty">No badges yet — attend events, refer friends and finish lessons to earn them.</div>'}
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-shield-halved"></i> My House</div>
+      ${house ? `<div style="display:flex;align-items:center;gap:12px"><span style="font-size:30px">${esc(house.icon||'🏠')}</span>
+        <div><div style="font-weight:800;font-size:16px">${esc(house.name)}</div><div class="jr-ev-meta">${(houseTotals()[hId]||0)} house points</div></div></div>`
+        : '<div class="jr-empty">You haven\'t joined a house yet. <a class="auth-link" onclick="showPage(\'houses\')">Pick your house →</a></div>'}
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-calendar-check"></i> Upcoming events</div>
+      ${upcoming.length ? upcoming.map(evRowHTML).join('') : '<div class="jr-empty">No upcoming registrations. <a class="auth-link" onclick="showPage(\'events\')">Browse events →</a></div>'}
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-clock-rotate-left"></i> Event history</div>
+      ${pastRows.length ? pastRows.map(evRowHTML).join('') : '<div class="jr-empty">Your attended and past events will appear here.</div>'}
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-graduation-cap"></i> Learning progress</div>
+      ${lp ? `<div style="font-size:13px;color:var(--text2)">${lp.completedCount}/${lp.totalChapters} chapters completed</div>
+              <div class="jr-progress-track"><span style="width:${lpPct}%"></span></div>
+              <div class="jr-ev-meta" style="margin-top:6px">${lpPct}% complete · ${learnBadges.length} learning badge${learnBadges.length===1?'':'s'}</div>`
+           : '<div class="jr-empty">You haven\'t started the learning tracks yet. <a class="auth-link" onclick="showPage(\'learn\')">Start learning →</a></div>'}
+    </div>
+
+    <div class="jr-section">
+      <div class="jr-sec-title"><i class="fa-solid fa-user-plus"></i> Invite friends &amp; earn rewards</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Share your personal link. When a friend signs up, you both get a badge${house?' and your house earns +'+REFERRAL_POINTS+' points':''}.</div>
+      <div class="jr-invite">
+        <input id="jrInviteInput" type="text" readonly value="${esc(myInviteLink())}" onclick="this.select()"/>
+        <button class="btn btn-outline btn-sm" onclick="copyInviteLink()"><i class="fa-solid fa-copy"></i> Copy</button>
+        <button class="btn btn-primary btn-sm" onclick="shareInviteLink()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+      </div>
+    </div>
+  `;
+};
 
 </script>
 <!-- ===================== VISUAL EFFECTS: 3D HERO WEB + NETWORK BG + CURSOR THREADS ===================== -->
@@ -4230,6 +6305,117 @@ window.initLearn = function(){
   };
 
   window.SpyAgent = SpyAgent;
+})();
+</script>
+
+<!-- ===================== IDLE CURSOR SPIDER ===================== -->
+<script>
+(function(){
+  // Respect reduced-motion and skip touch-only devices (no hovering cursor to stalk).
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia && !window.matchMedia('(pointer: fine)').matches) return;
+
+  const IDLE_MS = 10000;
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let idleTimer = null, rafId = null;
+  let spider = null, poison = null, particles = [];
+  let biting = false, seenMove = false;
+
+  function spiderSVG(){
+    return `<svg viewBox="0 0 44 44" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+      <g class="leg" stroke="#211c2b" stroke-width="2.2" fill="none" stroke-linecap="round">
+        <path d="M18 22 Q6 15 2 6"/><path d="M18 24 Q4 24 1 19"/>
+        <path d="M18 26 Q4 30 2 39"/><path d="M18 28 Q7 37 4 43"/>
+        <path d="M26 22 Q38 15 42 6"/><path d="M26 24 Q40 24 43 19"/>
+        <path d="M26 26 Q40 30 42 39"/><path d="M26 28 Q37 37 40 43"/>
+      </g>
+      <ellipse cx="22" cy="26" rx="11" ry="9.5" fill="#2a2436"/>
+      <ellipse cx="22" cy="16" rx="7" ry="6" fill="#3a3348"/>
+      <circle cx="19" cy="15" r="1.6" fill="#e6e2f2"/><circle cx="25" cy="15" r="1.6" fill="#e6e2f2"/>
+      <circle cx="17" cy="18" r="1" fill="#e6e2f2"/><circle cx="27" cy="18" r="1" fill="#e6e2f2"/>
+    </svg>`;
+  }
+
+  function clearAll(){
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+    biting = false;
+    if(spider){ spider.remove(); spider = null; }
+    if(poison){ poison.remove(); poison = null; }
+    particles.forEach(p=>{ try{ p.remove(); }catch(e){} }); particles = [];
+    document.body.classList.remove('poison-cursor');
+  }
+  function armIdle(){ clearTimeout(idleTimer); idleTimer = setTimeout(startSpider, IDLE_MS); }
+
+  // Any mouse activity cancels the spider and resets the 10s countdown.
+  function onMove(e){
+    if(typeof e.clientX === 'number'){ mx = e.clientX; my = e.clientY; }
+    seenMove = true;
+    if(spider || poison) clearAll();
+    armIdle();
+  }
+
+  function startSpider(){
+    if(document.hidden) return;
+    clearAll();
+    spider = document.createElement('div');
+    spider.id = 'idleSpider';
+    spider.innerHTML = spiderSVG();
+    document.body.appendChild(spider);
+    // Enter from whichever screen edge is closest to the cursor.
+    const edges = [
+      {x:mx, y:-60}, {x:mx, y:window.innerHeight+60},
+      {x:-60, y:my}, {x:window.innerWidth+60, y:my}
+    ].sort((a,b)=>Math.hypot(a.x-mx,a.y-my) - Math.hypot(b.x-mx,b.y-my));
+    let sx = edges[0].x, sy = edges[0].y;
+    const SPEED = 0.14;
+    (function crawl(){
+      const dx = mx-sx, dy = my-sy, dist = Math.hypot(dx,dy);
+      sx += dx*SPEED; sy += dy*SPEED;
+      const ang = Math.atan2(dy,dx)*180/Math.PI + 90; // spider's head faces its travel direction
+      spider.style.transform = `translate(${sx-20}px, ${sy-20}px) rotate(${ang}deg)`;
+      if(dist < 6 && !biting){ bite(); return; }
+      rafId = requestAnimationFrame(crawl);
+    })();
+  }
+
+  function bite(){
+    biting = true;
+    if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(e){} }
+    // "Poisoned cursor": hide the real pointer and drop a wobbling green venom dot in its place.
+    poison = document.createElement('div');
+    poison.className = 'spider-poison';
+    poison.style.left = mx+'px'; poison.style.top = my+'px';
+    poison.style.animation = 'poisonWobble .5s ease-in-out infinite';
+    document.body.appendChild(poison);
+    document.body.classList.add('poison-cursor');
+    // Venom particle burst.
+    for(let i=0;i<8;i++){
+      const p = document.createElement('div');
+      p.className = 'spider-particle';
+      p.style.left = mx+'px'; p.style.top = my+'px';
+      document.body.appendChild(p);
+      particles.push(p);
+      const a = (i/8)*Math.PI*2, d = 18 + Math.random()*16;
+      p.animate([
+        { transform:'translate(-50%,-50%) scale(1)', opacity:1 },
+        { transform:`translate(${Math.cos(a)*d}px, ${Math.sin(a)*d}px) scale(0)`, opacity:0 }
+      ], { duration:650, easing:'ease-out', fill:'forwards' });
+    }
+    // Spider scurries off; venom fades; everything resets and re-arms.
+    setTimeout(()=>{ if(spider) spider.animate([{opacity:1},{opacity:0}], {duration:400, fill:'forwards'}); }, 450);
+    setTimeout(()=>{ if(poison) poison.animate([{opacity:1},{opacity:0}], {duration:600, fill:'forwards'}); }, 2200);
+    setTimeout(()=>{ clearAll(); armIdle(); }, 2900);
+  }
+
+  window.addEventListener('mousemove', onMove, {passive:true});
+  window.addEventListener('mousedown', onMove, {passive:true});
+  window.addEventListener('wheel', onMove, {passive:true});
+  window.addEventListener('mouseleave', ()=>{ clearTimeout(idleTimer); if(spider||poison) clearAll(); });
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){ clearTimeout(idleTimer); clearAll(); }
+    else if(seenMove){ armIdle(); }
+  });
+  armIdle(); // start the countdown even if the mouse never moves after load
 })();
 </script>
 
